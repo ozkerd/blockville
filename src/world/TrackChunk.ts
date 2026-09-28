@@ -43,6 +43,9 @@ export class TrackChunk {
   private rightCurb!: THREE.Mesh;
   private leftSidewalk!: THREE.Mesh;
   private rightSidewalk!: THREE.Mesh;
+  private leftLandscape!: THREE.Mesh;
+  private rightLandscape!: THREE.Mesh;
+  private oceanMesh!: THREE.Mesh;
   private sceneryGroup = new THREE.Group();
 
   constructor() {
@@ -70,19 +73,41 @@ export class TrackChunk {
     this.rightCurb.receiveShadow = true;
     this.group.add(this.rightCurb);
 
-    // Sidewalks
+    // Near Sidewalks
     const sidewalkGeom = new THREE.PlaneGeometry(8.0, CHUNK_LENGTH);
     sidewalkGeom.rotateX(-Math.PI / 2);
 
     this.leftSidewalk = new THREE.Mesh(sidewalkGeom, ToyMaterialFactory.getPlastic(0xFFF9C4, 0.45, 0.0));
-    this.leftSidewalk.position.set(-ROAD_WIDTH / 2 - 4.6, -0.01, 0);
+    this.leftSidewalk.position.set(-ROAD_WIDTH / 2 - 4.3, -0.01, 0);
     this.leftSidewalk.receiveShadow = true;
     this.group.add(this.leftSidewalk);
 
     this.rightSidewalk = new THREE.Mesh(sidewalkGeom, ToyMaterialFactory.getPlastic(0xFFF9C4, 0.45, 0.0));
-    this.rightSidewalk.position.set(ROAD_WIDTH / 2 + 4.6, -0.01, 0);
+    this.rightSidewalk.position.set(ROAD_WIDTH / 2 + 4.3, -0.01, 0);
     this.rightSidewalk.receiveShadow = true;
     this.group.add(this.rightSidewalk);
+
+    // Wide Ultra-Horizon Landscapes (spans out to X = +/-85m)
+    const landscapeGeom = new THREE.PlaneGeometry(80.0, CHUNK_LENGTH);
+    landscapeGeom.rotateX(-Math.PI / 2);
+
+    this.leftLandscape = new THREE.Mesh(landscapeGeom, ToyMaterialFactory.getPlastic(0x81C784, 0.5, 0.0));
+    this.leftLandscape.position.set(-ROAD_WIDTH / 2 - 48.0, -0.04, 0);
+    this.leftLandscape.receiveShadow = true;
+    this.group.add(this.leftLandscape);
+
+    this.rightLandscape = new THREE.Mesh(landscapeGeom, ToyMaterialFactory.getPlastic(0x81C784, 0.5, 0.0));
+    this.rightLandscape.position.set(ROAD_WIDTH / 2 + 48.0, -0.04, 0);
+    this.rightLandscape.receiveShadow = true;
+    this.group.add(this.rightLandscape);
+
+    // Glossy Turquoise Ocean Water (Boardwalk Coastline)
+    const oceanGeom = new THREE.PlaneGeometry(75.0, CHUNK_LENGTH);
+    oceanGeom.rotateX(-Math.PI / 2);
+    this.oceanMesh = new THREE.Mesh(oceanGeom, ToyMaterialFactory.getPlastic(0x00B0FF, 0.08, 0.0));
+    this.oceanMesh.position.set(ROAD_WIDTH / 2 + 45.5, -0.02, 0);
+    this.oceanMesh.receiveShadow = true;
+    this.group.add(this.oceanMesh);
 
     // Transverse road joints & dashed divider plates
     const jointMat = ToyMaterialFactory.getPlastic(0x37474F, 0.4, 0.0);
@@ -134,11 +159,25 @@ export class TrackChunk {
     this.leftSidewalk.material = ToyMaterialFactory.getPlastic(visuals.sidewalkColor, 0.45, 0.0);
     this.rightSidewalk.material = ToyMaterialFactory.getPlastic(visuals.sidewalkColor, 0.45, 0.0);
 
+    // Wide terrain styling
+    const groundMat = ToyMaterialFactory.getPlastic(visuals.groundColor, 0.45, 0.0);
+    this.leftLandscape.material = groundMat;
+    this.rightLandscape.material = groundMat;
+
+    // Ocean styling for Boardwalk and Pier
+    const hasOcean = biome === 'boardwalk' || biome === 'pier';
+    this.oceanMesh.visible = hasOcean;
+    if (biome === 'boardwalk') {
+      // Golden beach sand leading up to the ocean
+      this.rightSidewalk.material = ToyMaterialFactory.getPlastic(0xFFF59D, 0.45, 0.0);
+      this.rightLandscape.material = ToyMaterialFactory.getPlastic(0xFFE082, 0.45, 0.0);
+    }
+
     // Clear old props & obstacles
     this.clearDynamicObjects();
 
-    // Spawn Rich Scenery Props along edges with depth layering
-    let propIdx = this.chunkIndex * 10;
+    // 1. Spawn Foreground Roadside Props (Streetlamps, palms, cafes, trees)
+    let propIdx = this.chunkIndex * 12;
     for (let pZ = -CHUNK_LENGTH / 2 + 3.6; pZ <= CHUNK_LENGTH / 2 - 3.6; pZ += 7.2) {
       const leftProp = visuals.buildSceneryProp('left', propIdx++);
       const leftDepth = -ROAD_WIDTH / 2 - (propIdx % 2 === 0 ? 3.8 : 2.6);
@@ -149,6 +188,19 @@ export class TrackChunk {
       const rightDepth = ROAD_WIDTH / 2 + (propIdx % 2 === 0 ? 3.8 : 2.6);
       rightProp.position.set(rightDepth, 0, pZ);
       this.sceneryGroup.add(rightProp);
+    }
+
+    // 2. Spawn Wide-Angle Horizon Backdrops (Skyscrapers, Ocean Sailboats, Pine Ridges)
+    for (let bZ = -CHUNK_LENGTH / 2 + 7.2; bZ <= CHUNK_LENGTH / 2 - 7.2; bZ += 14.4) {
+      const leftBackdrop = visuals.buildWideBackdrop('left', propIdx++);
+      leftBackdrop.position.set(-ROAD_WIDTH / 2 - 24.0, 0, bZ);
+      this.sceneryGroup.add(leftBackdrop);
+
+      const rightBackdrop = visuals.buildWideBackdrop('right', propIdx++);
+      // On boardwalk: sailboats float out in the open turquoise water
+      const rightDist = biome === 'boardwalk' ? 32.0 : 24.0;
+      rightBackdrop.position.set(ROAD_WIDTH / 2 + rightDist, 0, bZ);
+      this.sceneryGroup.add(rightBackdrop);
     }
 
     if (!isFirstChunk) {

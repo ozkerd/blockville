@@ -20,7 +20,14 @@ export class InputManager {
     }
   }
 
+  public onPauseToggle?: () => void;
+
   private handleKeyDown(e: KeyboardEvent): void {
+    if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') {
+      this.onPauseToggle?.();
+      return;
+    }
+
     if (!this.isEnabled) return;
 
     if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {

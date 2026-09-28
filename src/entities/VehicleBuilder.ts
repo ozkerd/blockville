@@ -476,10 +476,10 @@ export class VehicleBuilder {
   ): void {
     const { chassis, frontWheelPivots, allWheels, topperMesh } = parts;
 
-    // 1. Steering angle on front wheels
-    const targetSteerAngle = -steerTarget * 0.45;
+    // 1. Steering angle on front wheels and scooter handlebars
+    const targetSteerAngle = -steerTarget * 0.85;
     for (const pivot of frontWheelPivots) {
-      pivot.rotation.y = THREE.MathUtils.lerp(pivot.rotation.y, targetSteerAngle, deltaTime * 12);
+      pivot.rotation.y = THREE.MathUtils.lerp(pivot.rotation.y, targetSteerAngle, deltaTime * 16);
     }
 
     // 2. Wheel rotation based on forward speed

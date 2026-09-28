@@ -85,9 +85,32 @@ class BlockvilleApp {
       this.startRun();
     };
 
+    this.uiManager.onPauseGame = () => {
+      if (this.appState === 'playing') {
+        this.appState = 'paused';
+        this.inputManager.setEnabled(false);
+        this.audioManager.pauseMusic();
+        this.audioManager.stopVehicleEngine();
+      }
+    };
+
     this.uiManager.onResumeGame = () => {
-      this.appState = 'playing';
-      this.inputManager.setEnabled(true);
+      if (this.appState === 'paused') {
+        this.appState = 'playing';
+        this.inputManager.setEnabled(true);
+        this.audioManager.startMusic();
+        if (this.player.mode === 'in_vehicle') {
+          this.audioManager.startVehicleEngine();
+        }
+      }
+    };
+
+    this.inputManager.onPauseToggle = () => {
+      if (this.appState === 'playing') {
+        this.uiManager.showPauseModal();
+      } else if (this.appState === 'paused') {
+        this.uiManager.resumeGame();
+      }
     };
 
     this.uiManager.onRestartGame = () => {

@@ -388,26 +388,37 @@ export class CharacterBuilder {
   }
 
   /**
-   * Poses the avatar inside the vehicle cockpit with ducking support
+   * Poses the avatar inside the vehicle cockpit or on scooter with dynamic turn banking and ducking
    */
-  public static poseInVehicle(rig: CharacterRigs, steerAngle: number, isDucking = false): void {
+  public static poseInVehicle(rig: CharacterRigs, steerAngle: number, isDucking = false, isScooter = false): void {
     const { root, hips, torso, head, leftArm, rightArm, leftLeg, rightLeg } = rig;
 
     root.rotation.set(0, Math.PI, 0);
 
     if (isDucking) {
-      // Duck down deeply into cockpit
-      hips.position.set(0, 0.22, 0.12);
-      torso.rotation.set(0.65, 0, 0); // lean hard forward
-      head.rotation.set(-0.4, 0, 0);  // tuck chin down
+      // Duck down deeply into cockpit or over scooter handlebars
+      hips.position.set(0, isScooter ? 0.35 : 0.22, 0.12);
+      torso.rotation.set(0.65, 0, -steerAngle * 0.2); // lean hard forward + bank
+      head.rotation.set(-0.4, -steerAngle * 0.3, 0);  // tuck chin down, look into apex
       leftLeg.rotation.set(-1.6, 0.3, 0);
       rightLeg.rotation.set(-1.6, -0.3, 0);
-      leftArm.rotation.set(-1.5, 0.4 + steerAngle * 0.4, -0.3);
-      rightArm.rotation.set(-1.5, -0.4 + steerAngle * 0.4, 0.3);
+      leftArm.rotation.set(-1.5, 0.4 + steerAngle * 0.5, -0.3);
+      rightArm.rotation.set(-1.5, -0.4 + steerAngle * 0.5, 0.3);
+    } else if (isScooter) {
+      // Upright stylish retro Vespa riding posture with dynamic rider banking
+      hips.position.set(0, 0.54, 0.08);
+      torso.rotation.set(0.05, 0, -steerAngle * 0.35); // Lean into curve!
+      head.rotation.set(0.08, -steerAngle * 0.4, 0);   // Eyes on the road
+      leftLeg.rotation.set(-0.85, 0.18, 0);
+      rightLeg.rotation.set(-0.85, -0.18, 0);
+
+      // Gripping the handlebars
+      leftArm.rotation.set(-1.05, 0.25 + steerAngle * 0.5, -0.18);
+      rightArm.rotation.set(-1.05, -0.25 + steerAngle * 0.5, 0.18);
     } else {
       hips.position.set(0, 0.45, 0.05);
-      torso.rotation.set(-0.15, 0, 0);
-      head.rotation.set(0.1, 0, 0);
+      torso.rotation.set(-0.15, 0, -steerAngle * 0.18);
+      head.rotation.set(0.1, -steerAngle * 0.2, 0);
 
       // Seated legs forward towards pedals
       leftLeg.rotation.set(-1.4, 0.2, 0);

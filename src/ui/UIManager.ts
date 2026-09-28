@@ -57,6 +57,7 @@ export class UIManager {
 
   // Callbacks
   public onStartGame: (mode: 'endless' | 'stage', stageIdx?: number) => void = () => {};
+  public onPauseGame: () => void = () => {};
   public onResumeGame: () => void = () => {};
   public onRestartGame: () => void = () => {};
   public onQuitToMenu: () => void = () => {};
@@ -272,6 +273,12 @@ export class UIManager {
 
   public showPauseModal(): void {
     this.pauseScreen.classList.remove('hidden');
+    this.onPauseGame();
+  }
+
+  public resumeGame(): void {
+    this.pauseScreen.classList.add('hidden');
+    this.onResumeGame();
   }
 
   public showGameOverModal(stats: RunStats): void {

@@ -102,7 +102,7 @@ export class PlayerController {
     } else {
       this.vehicleModel.visible = true;
       this.vehicleParts.cockpitAnchor.add(this.avatarModel);
-      CharacterBuilder.poseInVehicle(this.avatarRig, 0);
+      CharacterBuilder.poseInVehicle(this.avatarRig, 0, false, this.vehicleId === 'scooter');
       this.group.add(this.vehicleModel);
     }
   }
@@ -342,8 +342,20 @@ export class PlayerController {
         deltaTime
       );
     } else {
-      CharacterBuilder.poseInVehicle(this.avatarRig, laneShiftProgress, isDucking);
+      const isScooter = this.vehicleId === 'scooter';
+      CharacterBuilder.poseInVehicle(this.avatarRig, laneShiftProgress, isDucking, isScooter);
     }
+
+    // Dynamic Turn Banking & Steering Yaw!
+    const isScooter = this.mode === 'in_vehicle' && this.vehicleId === 'scooter';
+    const turnDelta = (this.targetX - this.currentX);
+    // Yaw: point nose dynamically towards target lane
+    const targetYaw = -turnDelta * (isScooter ? 0.32 : 0.22);
+    // Roll: lean into turn (Scooters lean heavily like real mopeds up to ~35 degrees!)
+    const targetRoll = -turnDelta * (isScooter ? 0.65 : (this.mode === 'in_vehicle' ? 0.32 : 0.24));
+
+    this.group.rotation.y = THREE.MathUtils.lerp(this.group.rotation.y, targetYaw, deltaTime * 14);
+    this.group.rotation.z = THREE.MathUtils.lerp(this.group.rotation.z, targetRoll, deltaTime * 14);
 
     // Update group transform
     this.group.position.set(this.currentX, this.y, this.z);

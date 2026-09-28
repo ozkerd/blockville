@@ -11,6 +11,7 @@ export interface BiomeVisuals {
   fogColor: number;
   groundColor: number;
   buildSceneryProp: (side: 'left' | 'right', index: number) => THREE.Group;
+  buildWideBackdrop: (side: 'left' | 'right', index: number) => THREE.Group;
 }
 
 export class BiomeDefinitions {
@@ -248,6 +249,73 @@ export class BiomeDefinitions {
       }
 
       return group;
+    },
+
+    buildWideBackdrop: (side, idx) => {
+      const group = new THREE.Group();
+      if (side === 'right') {
+        // --- RIGHT SIDE: OPEN OCEAN & TOY SAILBOATS ---
+        const boatChoice = idx % 2;
+        if (boatChoice === 0) {
+          // Classic Toy Sailboat bobbing in the bay
+          const hull = ToyMaterialFactory.createBlock(1.6, 0.7, 3.8, ToyMaterialFactory.WhitePlastic);
+          hull.position.y = 0.25;
+          group.add(hull);
+
+          const deck = ToyMaterialFactory.createBlock(1.4, 0.08, 3.5, ToyMaterialFactory.getPlastic(0xD7CCC8, 0.4, 0.0));
+          deck.position.y = 0.62;
+          group.add(deck);
+
+          const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 4.5, 8), ToyMaterialFactory.Chrome);
+          mast.position.set(0, 2.8, 0);
+          group.add(mast);
+
+          const sailShape = new THREE.Shape();
+          sailShape.moveTo(0, 0);
+          sailShape.lineTo(0, 3.8);
+          sailShape.lineTo(2.0, 0.4);
+          sailShape.closePath();
+          const sailGeom = new THREE.ShapeGeometry(sailShape);
+          const sailColors = [0xFF4081, 0x00E5FF, 0xFFEA00];
+          const sailMat = ToyMaterialFactory.getPlastic(sailColors[idx % sailColors.length], 0.15, 0.0);
+          const sail = new THREE.Mesh(sailGeom, sailMat);
+          sail.position.set(0.04, 0.9, -0.2);
+          sail.rotation.y = 0.25;
+          group.add(sail);
+        } else {
+          // Ocean Navigation Buoy with bright flashing yellow beacon
+          const buoy = new THREE.Mesh(new THREE.ConeGeometry(0.8, 1.8, 8), ToyMaterialFactory.getPlastic(0xFF1744, 0.2, 0.0));
+          buoy.position.y = 0.9;
+          group.add(buoy);
+
+          const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 8), ToyMaterialFactory.getPlastic(0xFFEB3B, 0.1, 0.0));
+          beacon.position.y = 1.95;
+          group.add(beacon);
+        }
+      } else {
+        // --- LEFT SIDE: TALL RESORT HOTELS & COASTAL TOWNHOUSES ---
+        const bldgColors = [0xFF80AB, 0x80D8FF, 0xB388FF, 0xA7FFEB];
+        const facadeMat = ToyMaterialFactory.getPlastic(bldgColors[idx % bldgColors.length], 0.2, 0.0);
+        const windowMat = ToyMaterialFactory.GlassWindshield;
+
+        const height = 9.5 + (idx % 3) * 2.5;
+        const bldg = ToyMaterialFactory.createBlock(5.6, height, 5.0, facadeMat);
+        bldg.position.y = height * 0.5;
+        group.add(bldg);
+
+        for (let floor = 1; floor <= 4; floor++) {
+          [-1.6, 0, 1.6].forEach((wx) => {
+            const win = ToyMaterialFactory.createBlock(0.85, 1.1, 0.1, windowMat);
+            win.position.set(wx, floor * 1.9, 2.52);
+            group.add(win);
+          });
+        }
+
+        const umbrella = new THREE.Mesh(new THREE.ConeGeometry(1.6, 0.6, 10), ToyMaterialFactory.getPlastic(0xFF5252, 0.2, 0.0));
+        umbrella.position.set(0, height + 0.8, 0);
+        group.add(umbrella);
+      }
+      return group;
     }
   };
 
@@ -399,6 +467,35 @@ export class BiomeDefinitions {
       }
 
       return group;
+    },
+
+    buildWideBackdrop: (_side, idx) => {
+      const group = new THREE.Group();
+      // Towering 6 to 12 story high-rise Lego Skyscraper
+      const colors = [0x1A237E, 0x004D40, 0x311B92, 0x263238, 0xB71C1C];
+      const facade = ToyMaterialFactory.getPlastic(colors[idx % colors.length], 0.2, 0.0);
+      const glass = ToyMaterialFactory.getPlastic(0x80D8FF, 0.1, 0.0);
+
+      const height = 12.0 + (idx % 4) * 3.5;
+      const tower = ToyMaterialFactory.createBlock(6.5, height, 5.5, facade);
+      tower.position.y = height * 0.5;
+      group.add(tower);
+
+      // Windows grid
+      for (let f = 1; f < Math.floor(height / 2.2); f++) {
+        [-2.0, 0, 2.0].forEach((wx) => {
+          const w = ToyMaterialFactory.createBlock(1.1, 1.2, 0.1, glass);
+          w.position.set(wx, f * 2.2, 2.8);
+          group.add(w);
+        });
+      }
+
+      // Rooftop Spire Antenna or Helipad
+      const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.15, 4.5, 8), ToyMaterialFactory.Chrome);
+      spire.position.set(0, height + 2.25, 0);
+      group.add(spire);
+
+      return group;
     }
   };
 
@@ -530,6 +627,47 @@ export class BiomeDefinitions {
       }
 
       return group;
+    },
+
+    buildWideBackdrop: (_side, idx) => {
+      const group = new THREE.Group();
+      // Dense Alpine Pine Grove & Forest Chalet
+      const choice = idx % 2;
+      if (choice === 0) {
+        // Cluster of 3 towering mountain pines
+        const pineMat = ToyMaterialFactory.getPlastic(0x1B5E20, 0.3, 0.0);
+        const trunkMat = ToyMaterialFactory.getPlastic(0x4E342E, 0.4, 0.0);
+
+        [-2.4, 0, 2.4].forEach((px, pIdx) => {
+          const h = 8.5 + pIdx * 1.5;
+          const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.48, h, 8), trunkMat);
+          trunk.position.set(px, h * 0.5, (pIdx % 2 === 0 ? 1.2 : -1.2));
+          group.add(trunk);
+
+          for (let t = 0; t < 5; t++) {
+            const cone = new THREE.Mesh(new THREE.ConeGeometry(2.6 - t * 0.4, 2.4, 8), pineMat);
+            cone.position.set(px, h * 0.38 + t * 1.5, (pIdx % 2 === 0 ? 1.2 : -1.2));
+            group.add(cone);
+          }
+        });
+      } else {
+        // Mountain Chalet Lodge with smoking chimney
+        const logMat = ToyMaterialFactory.getPlastic(0x5D4037, 0.4, 0.0);
+        const roofMat = ToyMaterialFactory.getPlastic(0x37474F, 0.3, 0.0);
+        const cabin = ToyMaterialFactory.createBlock(5.4, 3.6, 4.2, logMat);
+        cabin.position.y = 1.8;
+        group.add(cabin);
+
+        const roof = new THREE.Mesh(new THREE.ConeGeometry(4.4, 2.5, 4), roofMat);
+        roof.position.set(0, 4.6, 0);
+        roof.rotation.y = Math.PI / 4;
+        group.add(roof);
+
+        const chimney = ToyMaterialFactory.createBlock(0.8, 4.4, 0.8, ToyMaterialFactory.getPlastic(0x78909C, 0.4, 0.0));
+        chimney.position.set(1.9, 3.4, 0.8);
+        group.add(chimney);
+      }
+      return group;
     }
   };
 
@@ -617,6 +755,30 @@ export class BiomeDefinitions {
       }
 
       return group;
+    },
+
+    buildWideBackdrop: (side, idx) => {
+      const group = new THREE.Group();
+      // Glowing Carnival Ferris Wheel or Coaster Mountain
+      const isWheel = idx % 2 === 0;
+      if (isWheel) {
+        const rim = new THREE.Mesh(new THREE.TorusGeometry(5.5, 0.22, 8, 30), ToyMaterialFactory.getPlastic(0xFFD600, 0.15, 0.0));
+        rim.position.y = 7.0;
+        rim.rotation.y = side === 'left' ? 0.35 : -0.35;
+        group.add(rim);
+
+        [-2.2, 2.2].forEach((lx) => {
+          const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 8.0, 8), ToyMaterialFactory.getPlastic(0x37474F, 0.2, 0.0));
+          leg.position.set(lx, 4.0, 0);
+          leg.rotation.z = -lx * 0.15;
+          group.add(leg);
+        });
+      } else {
+        const tent = new THREE.Mesh(new THREE.ConeGeometry(4.2, 4.5, 10), ToyMaterialFactory.getPlastic(0xFF1744, 0.15, 0.0));
+        tent.position.y = 2.25;
+        group.add(tent);
+      }
+      return group;
     }
   };
 
@@ -677,6 +839,19 @@ export class BiomeDefinitions {
         });
       }
 
+      return group;
+    },
+
+    buildWideBackdrop: (_side, idx) => {
+      const group = new THREE.Group();
+      // Giant Cyber Data Monolith with pulsing neon lines
+      const monolith = ToyMaterialFactory.createBlock(4.5, 14.0 + (idx % 3) * 3, 4.5, ToyMaterialFactory.getPlastic(0x1A237E, 0.15, 0.0));
+      monolith.position.y = 7.0;
+      group.add(monolith);
+
+      const neonSpire = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.2, 5.0, 6), ToyMaterialFactory.getPlastic(0x00E5FF, 0.1, 0.0));
+      neonSpire.position.y = 16.5;
+      group.add(neonSpire);
       return group;
     }
   };
@@ -744,6 +919,20 @@ export class BiomeDefinitions {
         group.add(cherry);
       }
 
+      return group;
+    },
+
+    buildWideBackdrop: (_side, idx) => {
+      const group = new THREE.Group();
+      // Giant Swirl Lollipop Mountain / Sugar Cane Tower
+      const h = 10.0 + (idx % 3) * 2;
+      const cane = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, h, 12), ToyMaterialFactory.WhitePlastic);
+      cane.position.y = h * 0.5;
+      group.add(cane);
+
+      const candyHead = new THREE.Mesh(new THREE.SphereGeometry(3.0, 12, 12), ToyMaterialFactory.getPlastic(0xFF4081, 0.15, 0.0));
+      candyHead.position.y = h + 1.5;
+      group.add(candyHead);
       return group;
     }
   };

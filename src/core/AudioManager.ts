@@ -320,6 +320,10 @@ export class AudioManager {
     }, 170);
   }
 
+  public pauseMusic(): void {
+    this.stopMusic();
+  }
+
   public stopMusic(): void {
     this.isMusicPlaying = false;
     if (this.musicInterval !== null) {

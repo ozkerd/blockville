@@ -8,9 +8,11 @@ import { GameState, VEHICLE_DEFS, CHARACTER_DEFS } from '../core/GameState';
 import { SceneRenderer } from '../rendering/SceneRenderer';
 import { BiomeDefinitions } from './BiomeDefinitions';
 import { FloatingTextManager } from '../rendering/FloatingTextManager';
+import { SkyManager } from './SkyManager';
 
 export class TrackManager {
   public group: THREE.Group;
+  public skyManager = new SkyManager();
   private chunks: TrackChunk[] = [];
   private readonly numChunks = 10;
   private currentBiome: BiomeType = 'boardwalk';
@@ -36,6 +38,9 @@ export class TrackManager {
     this.floatingText = floatingText;
     this.group = new THREE.Group();
 
+    // Add sky dome and celestial objects
+    this.group.add(this.skyManager.group);
+
     // Initialize chunk pool
     for (let i = 0; i < this.numChunks; i++) {
       const chunk = new TrackChunk();
@@ -50,6 +55,7 @@ export class TrackManager {
 
     const visuals = BiomeDefinitions.getBiome(this.currentBiome);
     this.sceneRenderer.setSkyColor(visuals.skyColor, visuals.groundColor, visuals.fogColor);
+    this.skyManager.setBiome(this.currentBiome);
 
     // Layout chunks sequentially ahead of Z = 0 (towards negative Z)
     for (let i = 0; i < this.numChunks; i++) {
@@ -88,6 +94,9 @@ export class TrackManager {
     const crashOccurred = this.checkCollisions(player);
     const stageWon = this.gameState.mode === 'stage' && this.gameState.checkStageCompletion();
 
+    // 6. Update sky dome clouds, weather, and celestial objects
+    this.skyManager.update(player.z, deltaTime);
+
     return { crashed: crashOccurred, stageWon };
   }
 
@@ -98,6 +107,7 @@ export class TrackManager {
         this.currentBiome = stage.biome;
         const visuals = BiomeDefinitions.getBiome(this.currentBiome);
         this.sceneRenderer.setSkyColor(visuals.skyColor, visuals.groundColor, visuals.fogColor);
+        this.skyManager.setBiome(this.currentBiome);
       }
       return;
     }
@@ -108,6 +118,7 @@ export class TrackManager {
       this.currentBiome = targetBiome;
       const visuals = BiomeDefinitions.getBiome(this.currentBiome);
       this.sceneRenderer.setSkyColor(visuals.skyColor, visuals.groundColor, visuals.fogColor);
+      this.skyManager.setBiome(this.currentBiome);
     }
   }
 
@@ -216,9 +227,21 @@ export class TrackManager {
             continue; // Safely slided under!
           }
 
-          // Vehicle smash ability (any breakable obstacle, bumper shield, or turbo)
+          // In-Vehicle collisions:
           if (isVehicle) {
-            if (obs.canSmash || vehDef.hasBumperShield || player.turboTimer > 0) {
+            // Active Turbo bulldozes through all obstacles
+            if (player.turboTimer > 0) {
+              obs.isSmashed = true;
+              obs.mesh.visible = false;
+              this.gameState.addSmash();
+              this.audioManager.playSmashSound();
+              this.particleSystem.emitSmashDebris(obsWorldPos);
+              this.floatingText.spawn(obsWorldPos, 'TURBO SMASH! +100', '#FFEA00', '⚡', true);
+              continue;
+            }
+
+            // Only soft breakable props (cones, wooden crates) get cleanly smashed
+            if (obs.type === 'crate_stack' || obs.type === 'traffic_cone') {
               obs.isSmashed = true;
               obs.mesh.visible = false;
               this.gameState.addSmash();
@@ -226,15 +249,16 @@ export class TrackManager {
               this.particleSystem.emitSmashDebris(obsWorldPos);
               this.floatingText.spawn(obsWorldPos, '+50', '#FF7043', '💥');
               continue;
-            } else {
-              // Heavy roadblock in vehicle mode: safely ejects player onto foot!
-              obs.isSmashed = true;
-              obs.mesh.visible = false;
-              this.audioManager.playCrashSound();
-              this.particleSystem.emitSmashDebris(obsWorldPos, [0xD50000, 0xFFFFFF]);
-              player.dismountVehicle(true); // Front flip back onto feet!
-              continue;
             }
+
+            // Solid obstacles (roadblocks, barriers, un-ducked arches): Spectacular Crash & Eject!
+            obs.isSmashed = true;
+            obs.mesh.visible = false;
+            this.audioManager.playCrashSound();
+            this.particleSystem.emitSmashDebris(obsWorldPos, [0xD50000, 0xFFEB3B, 0xFF4081, 0x00E5FF]);
+            this.floatingText.spawn(obsWorldPos, 'CRASH EJECT!', '#FF1744', '💥', true);
+            player.dismountVehicle(true); // Dramatic front-flip ejection onto feet!
+            continue;
           }
 
           // On-foot: breakable crates and cones are smashed with points rather than fatal crashes
