@@ -182,20 +182,42 @@ export class SkyManager {
   public setBiome(biome: BiomeType): void {
     this.currentBiome = biome;
 
-    if (biome === 'plaza' || biome === 'cyber') {
-      // Twilight / Night
-      this.sunGroup.visible = false;
-      this.moonGroup.visible = true;
-      this.starsGroup.visible = true;
-      this.weatherMaterial.color.setHex(biome === 'cyber' ? 0x00E5FF : 0xFFFFFF);
-      this.weatherMaterial.opacity = 0.5;
-    } else {
-      // Daytime (Boardwalk, Forest, Pier, Candy)
+    if (biome === 'boardwalk') {
+      // Level 1: Heartlake Boardwalk - Pure Warm Sunshine & Ocean Breeze (NO SNOW / NO RAIN)
       this.sunGroup.visible = true;
       this.moonGroup.visible = false;
       this.starsGroup.visible = false;
-      this.weatherMaterial.color.setHex(biome === 'forest' ? 0xE0F7FA : 0xFFF9C4);
-      this.weatherMaterial.opacity = biome === 'forest' ? 0.85 : 0.45;
+      this.weatherPoints.visible = false;
+    } else if (biome === 'plaza') {
+      // Level 2: Downtown Plaza - Clear Crisp City Day
+      this.sunGroup.visible = true;
+      this.moonGroup.visible = false;
+      this.starsGroup.visible = false;
+      this.weatherPoints.visible = false;
+    } else if (biome === 'forest') {
+      // Level 3: Pinecrest Mountain Forest - Alpine Elevation with Gentle Snowflakes!
+      this.sunGroup.visible = true;
+      this.moonGroup.visible = false;
+      this.starsGroup.visible = false;
+      this.weatherPoints.visible = true;
+      this.weatherMaterial.color.setHex(0xFFFFFF); // Crisp white alpine snowflakes
+      this.weatherMaterial.opacity = 0.85;
+      this.weatherMaterial.size = 0.65;
+    } else if (biome === 'cyber') {
+      // High-Tech Cyber Grid
+      this.sunGroup.visible = false;
+      this.moonGroup.visible = true;
+      this.starsGroup.visible = true;
+      this.weatherPoints.visible = true;
+      this.weatherMaterial.color.setHex(0x00E5FF);
+      this.weatherMaterial.opacity = 0.55;
+      this.weatherMaterial.size = 0.45;
+    } else {
+      // Pier & Candy
+      this.sunGroup.visible = true;
+      this.moonGroup.visible = false;
+      this.starsGroup.visible = false;
+      this.weatherPoints.visible = false;
     }
   }
 
@@ -213,29 +235,31 @@ export class SkyManager {
     }
 
     // 2. Keep Sun and Moon high in front of player
-    this.sunGroup.position.z = playerZ + 75;
+    this.sunGroup.position.set(28, 34, playerZ + 75);
     this.sunGroup.rotation.z += deltaTime * 0.15; // Slow sunny rotation
 
-    this.moonGroup.position.z = playerZ + 75;
+    this.moonGroup.position.set(-32, 34, playerZ + 75);
     this.starsGroup.position.z = playerZ;
 
-    // 3. Update weather particles around player
-    const positions = (this.weatherPoints.geometry.attributes.position as THREE.BufferAttribute).array as Float32Array;
+    // 3. Update weather particles only when active (e.g. mountain forest snow)
+    if (this.weatherPoints.visible) {
+      const positions = (this.weatherPoints.geometry.attributes.position as THREE.BufferAttribute).array as Float32Array;
 
-    for (let i = 0; i < this.weatherCount; i++) {
-      const idx = i * 3;
-      positions[idx] += this.weatherVelocities[idx] * deltaTime;
-      positions[idx + 1] += this.weatherVelocities[idx + 1] * deltaTime;
-      positions[idx + 2] += this.weatherVelocities[idx + 2] * deltaTime;
+      for (let i = 0; i < this.weatherCount; i++) {
+        const idx = i * 3;
+        positions[idx] += this.weatherVelocities[idx] * deltaTime;
+        positions[idx + 1] += this.weatherVelocities[idx + 1] * deltaTime;
+        positions[idx + 2] += this.weatherVelocities[idx + 2] * deltaTime;
 
-      // Particle hits ground or falls behind player
-      if (positions[idx + 1] < 0.1 || positions[idx + 2] < playerZ - 10) {
-        positions[idx] = (Math.random() - 0.5) * 44;
-        positions[idx + 1] = 18 + Math.random() * 4;
-        positions[idx + 2] = playerZ + Math.random() * 65;
+        // Particle hits ground or falls behind player
+        if (positions[idx + 1] < 0.1 || positions[idx + 2] < playerZ - 10) {
+          positions[idx] = (Math.random() - 0.5) * 44;
+          positions[idx + 1] = 18 + Math.random() * 4;
+          positions[idx + 2] = playerZ + Math.random() * 65;
+        }
       }
-    }
 
-    this.weatherPoints.geometry.attributes.position.needsUpdate = true;
+      this.weatherPoints.geometry.attributes.position.needsUpdate = true;
+    }
   }
 }
