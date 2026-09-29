@@ -33,10 +33,10 @@ export class BiomeDefinitions {
   }
 
   // =========================================================================
-  // 1. HEARTLAKE BOARDWALK (Seaside Town, Beach, Ocean & Realistic Palm Trees)
+  // 1. SUNBURST BOARDWALK (Seaside Town, Beach, Ocean & Realistic Palm Trees)
   // =========================================================================
   private static boardwalkBiome: BiomeVisuals = {
-    name: 'Heartlake Boardwalk',
+    name: 'Sunburst Boardwalk',
     roadColor: 0xFFE082,      // Warm beach boardwalk yellow
     curbColor: 0x4DD0E1,      // Teal cyan railing
     sidewalkColor: 0xFFF9C4,  // Golden sandy boardwalk edge

@@ -16,7 +16,7 @@ Live Web App: [https://ozkerd.github.io/blockville/](https://ozkerd.github.io/bl
   - 🏎️ **Neon Buggy:** Wide off-road sand rail with exposed neon roll cage, oversized rear mud tires, bull-bar, and magnetic antenna.
   - 🛵 **Eco Scooter:** Classic 2-wheeled retro toy Vespa/moped with chrome handlebars, working steering fork, round retro headlight, side mirrors, and luggage rack.
 - **3 Rich Modular Biomes:**
-  - 🏖️ **Heartlake Boardwalk:** 7-segment curved coconut palm trees, pastel beach cottages, lifeguard towers, gelato cafe, surfboards.
+  - 🏖️ **Sunburst Boardwalk:** 7-segment curved coconut palm trees, pastel beach cottages, lifeguard towers, gelato cafe, surfboards.
   - 🏙️ **Downtown Plaza:** 4-story high-rise skyscrapers, clock tower spire, boutiques, street lamps, brick planters.
   - 🌲 **Pinecrest Forest:** Layered alpine pine trees, timber log cabins with smoking chimneys, footbridges, and mushroom clusters.
 - **Arcade Progression & Feedback:**

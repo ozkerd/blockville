@@ -3,7 +3,7 @@ import { CharacterId, VehicleId, ColorPaletteId, GameMode, StageConfig, RunStats
 export const LEVEL_DEFS: LevelDef[] = [
   {
     levelNumber: 1,
-    name: 'Heartlake Boardwalk',
+    name: 'Sunburst Boardwalk',
     subtitle: 'Seaside Town, Beach & Palm Trees',
     targetDistance: 1800, // ~1.5 minutes at 19 m/s
     biome: 'boardwalk',
@@ -138,7 +138,7 @@ export const VEHICLE_DEFS: Record<VehicleId, VehicleDef> = {
 export const STAGES: StageConfig[] = [
   {
     id: 1,
-    name: 'Heartlake Stroll',
+    name: 'Sunburst Stroll',
     targetDistance: 1500,
     targetCoins: 40,
     targetSmashes: 0,
