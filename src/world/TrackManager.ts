@@ -9,6 +9,7 @@ import { SceneRenderer } from '../rendering/SceneRenderer';
 import { BiomeDefinitions } from './BiomeDefinitions';
 import { FloatingTextManager } from '../rendering/FloatingTextManager';
 import { SkyManager } from './SkyManager';
+import { HapticManager } from '../core/HapticManager';
 
 export class TrackManager {
   public group: THREE.Group;
@@ -181,21 +182,25 @@ export class TrackManager {
           if (pickup.type === 'star_coin') {
             this.gameState.addCoins(1);
             this.audioManager.playCoinSound();
+            HapticManager.lightImpact();
             this.particleSystem.emitPickupSparkles(pickupWorldPos, 0xFFD700);
             const pts = 15 * this.gameState.multiplier;
             this.floatingText.spawn(pickupWorldPos, `+${pts}`, '#FFD700', '⭐');
           } else if (pickup.type === 'diamond_gem') {
             this.gameState.addGems(1);
             this.audioManager.playGemSound();
+            HapticManager.mediumImpact();
             this.particleSystem.emitPickupSparkles(pickupWorldPos, 0x00E5FF);
             this.floatingText.spawn(pickupWorldPos, '+100', '#00E5FF', '💎', true);
           } else if (pickup.type === 'vehicle_key') {
             player.mountVehicle();
+            HapticManager.heavyImpact();
             this.particleSystem.emitPickupSparkles(pickupWorldPos, 0xFFD54F);
             this.floatingText.spawn(pickupWorldPos, 'MOUNT RIDE!', '#FF4081', '🔑', true);
           } else if (pickup.type === 'heart_shield') {
             player.hasShield = true;
             this.audioManager.playGemSound();
+            HapticManager.mediumImpact();
             this.particleSystem.emitPickupSparkles(pickupWorldPos, 0xFF4081);
             this.floatingText.spawn(pickupWorldPos, 'SHIELD ON!', '#FF4081', '💖', true);
           } else if (pickup.type === 'toy_wrench') {
@@ -203,6 +208,7 @@ export class TrackManager {
               player.vehicleDuration = Math.min(player.maxVehicleDuration, player.vehicleDuration + 10);
             }
             this.audioManager.playMountSound();
+            HapticManager.lightImpact();
             this.particleSystem.emitPickupSparkles(pickupWorldPos, 0x00E676);
             this.floatingText.spawn(pickupWorldPos, '+10s FUEL', '#00E676', '🔧');
           }
@@ -235,6 +241,7 @@ export class TrackManager {
               obs.mesh.visible = false;
               this.gameState.addSmash();
               this.audioManager.playSmashSound();
+              HapticManager.heavyImpact();
               this.particleSystem.emitSmashDebris(obsWorldPos);
               this.floatingText.spawn(obsWorldPos, 'TURBO SMASH! +100', '#FFEA00', '⚡', true);
               continue;
@@ -246,6 +253,7 @@ export class TrackManager {
               obs.mesh.visible = false;
               this.gameState.addSmash();
               this.audioManager.playSmashSound();
+              HapticManager.mediumImpact();
               this.particleSystem.emitSmashDebris(obsWorldPos);
               this.floatingText.spawn(obsWorldPos, '+50', '#FF7043', '💥');
               continue;
@@ -255,6 +263,7 @@ export class TrackManager {
             obs.isSmashed = true;
             obs.mesh.visible = false;
             this.audioManager.playCrashSound();
+            HapticManager.heavyImpact();
             this.particleSystem.emitSmashDebris(obsWorldPos, [0xD50000, 0xFFEB3B, 0xFF4081, 0x00E5FF]);
             this.floatingText.spawn(obsWorldPos, 'CRASH EJECT!', '#FF1744', '💥', true);
             player.dismountVehicle(true); // Dramatic front-flip ejection onto feet!
@@ -267,6 +276,7 @@ export class TrackManager {
             obs.mesh.visible = false;
             this.gameState.addSmash();
             this.audioManager.playSmashSound();
+            HapticManager.mediumImpact();
             this.particleSystem.emitSmashDebris(obsWorldPos);
             this.floatingText.spawn(obsWorldPos, '+30', '#FF7043', '💥');
             continue;
@@ -278,6 +288,7 @@ export class TrackManager {
             obs.isSmashed = true;
             obs.mesh.visible = false;
             this.audioManager.playSmashSound();
+            HapticManager.mediumImpact();
             this.particleSystem.emitSmashDebris(obsWorldPos, [0xFF4081, 0xFFFFFF]);
             this.floatingText.spawn(obsWorldPos, 'SHIELD SAVED!', '#FF4081', '💖');
             continue;
@@ -285,6 +296,7 @@ export class TrackManager {
 
           // Lethal on-foot crash! (Hitting roadblock, robot sweeper, or barrier without jumping/sliding)
           this.audioManager.playCrashSound();
+          HapticManager.heavyImpact();
           this.particleSystem.emitSmashDebris(obsWorldPos, [0xFF5252, 0x263238]);
           player.movementState = 'crashed';
           return true;

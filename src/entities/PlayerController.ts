@@ -11,6 +11,7 @@ import { VehicleBuilder, VehicleParts } from './VehicleBuilder';
 import { ParticleSystem } from '../rendering/ParticleSystem';
 import { CHARACTER_DEFS, VEHICLE_DEFS } from '../core/GameState';
 import { AudioManager } from '../core/AudioManager';
+import { HapticManager } from '../core/HapticManager';
 
 export const LANE_WIDTH = 3.2;
 export const LANES = [-LANE_WIDTH, 0, LANE_WIDTH];
@@ -144,6 +145,7 @@ export class PlayerController {
       this.currentLane--;
       this.targetX = LANES[this.currentLane];
       this.audioManager.playSlideSound();
+      HapticManager.mediumImpact();
     }
   }
 
@@ -152,6 +154,7 @@ export class PlayerController {
       this.currentLane++;
       this.targetX = LANES[this.currentLane];
       this.audioManager.playSlideSound();
+      HapticManager.mediumImpact();
     }
   }
 
@@ -161,6 +164,7 @@ export class PlayerController {
       this.movementState = 'jumping';
       this.slideTimer = 0;
       this.audioManager.playJumpSound();
+      HapticManager.mediumImpact();
     }
   }
 
@@ -173,12 +177,14 @@ export class PlayerController {
       } else {
         this.audioManager.playSlideSound();
       }
+      HapticManager.mediumImpact();
     } else if (this.movementState === 'jumping') {
       // Fast fall / slam down on foot
       this.verticalVelocity = -22;
       this.movementState = 'sliding';
       this.slideTimer = this.maxSlideDuration;
       this.audioManager.playSlideSound();
+      HapticManager.mediumImpact();
     }
   }
 
@@ -220,6 +226,7 @@ export class PlayerController {
 
     // Particle flash
     this.particleSystem.emitSmashDebris(this.group.position, [0x00E5FF, 0xFF69B4, 0xFFD54F]);
+    HapticManager.heavyImpact();
   }
 
   /**
@@ -245,6 +252,7 @@ export class PlayerController {
 
     // Particle explosion of toy stars
     this.particleSystem.emitSmashDebris(this.group.position, [0xFF4081, 0xFFEB3B, 0x00E676]);
+    HapticManager.heavyImpact();
   }
 
   public activateTurbo(): void {

@@ -63,9 +63,51 @@ Outputs static bundle to `dist/`.
 
 ---
 
+## 📱 Native iOS App & Apple App Store Guide
+
+Blockville is packaged as a high-performance native iOS application using **Capacitor 7** with native Swift bridges and Apple Taptic Engine integration:
+
+- **Bundle ID:** `com.ozkerd.blockville`
+- **App Name:** `Blockville Rush & Ride`
+- **Native Haptics:** Light impacts on star pickups, medium impacts on gems & jumps, heavy impacts on vehicle mounting & obstacle crashes, and triumphant notification vibrations on Level Up & Stage Victory.
+- **Full Immersion:** Status bar hidden edge-to-edge display with custom safe area adaptation.
+- **Privacy Compliant:** Zero tracking SDKs, fully COPPA compliant for all ages, with privacy policy hosted at [https://ozkerd.github.io/blockville/privacy.html](https://ozkerd.github.io/blockville/privacy.html).
+
+### iOS Development Workflow
+
+1. **Install Dependencies & Build Bundle:**
+   ```bash
+   npm install
+   npm run build
+   ```
+
+2. **Sync Web Assets & Plugins to Native iOS:**
+   ```bash
+   npm run ios:copy
+   # or full sync:
+   npm run ios:sync
+   ```
+
+3. **Open Project in Xcode:**
+   ```bash
+   npm run ios:open
+   ```
+   *(Opens `ios/App/App.xcworkspace` in Xcode)*
+
+### Publishing to TestFlight & App Store
+
+1. In Xcode, select **App** in the Project Navigator.
+2. Under **Signing & Capabilities**, select your **Apple Developer Team**.
+3. Select **Any iOS Device (arm64)** from the device destination menu.
+4. From the top menu, choose **Product > Archive**.
+5. Once the build finishes, click **Distribute App > App Store Connect** to upload directly to TestFlight and submit for App Store Review.
+6. Provide the App Store Privacy Policy URL: `https://ozkerd.github.io/blockville/privacy.html`.
+
+---
+
 ## 🚀 GitHub Pages Deployment
 
-The repository includes an automated GitHub Actions workflow (`.github/workflows/deploy.yml`) that builds and publishes the game directly to GitHub Pages on every push to the `main` branch.
+The repository publishes the game web app and privacy policy directly to GitHub Pages at [https://ozkerd.github.io/blockville/](https://ozkerd.github.io/blockville/).
 
 ---
 

@@ -11,6 +11,7 @@ import { UIManager } from './ui/UIManager';
 import { GameMode } from './types/game';
 
 import { FloatingTextManager } from './rendering/FloatingTextManager';
+import { HapticManager } from './core/HapticManager';
 
 type AppFlowState = 'menu' | 'playing' | 'paused' | 'game_over' | 'victory';
 
@@ -67,6 +68,9 @@ class BlockvilleApp {
     // UI Manager
     this.uiManager = new UIManager(this.gameState, this.player, this.audioManager);
     this.setupUIHandlers();
+
+    // Hide iOS status bar for immersive full-screen gameplay
+    HapticManager.hideStatusBar();
 
     // Reset track to starting layout
     this.trackManager.reset('boardwalk');
@@ -195,6 +199,7 @@ class BlockvilleApp {
       const levelUpDef = this.gameState.checkLevelUp();
       if (levelUpDef) {
         this.audioManager.playLevelUpSound();
+        HapticManager.celebration();
         this.particleSystem.emitSmashDebris(this.player.group.position, [0xFFD700, 0x00E5FF, 0xFF4081, 0x76FF03]);
         this.floatingText.spawn(
           this.player.group.position,
@@ -242,6 +247,7 @@ class BlockvilleApp {
         if (this.crashTimer <= 0) {
           this.appState = 'game_over';
           this.inputManager.setEnabled(false);
+          HapticManager.warning();
           const stats = this.gameState.finalizeRun(false);
           this.uiManager.showGameOverModal(stats);
         }
@@ -251,6 +257,7 @@ class BlockvilleApp {
       if (this.gameState.mode === 'stage' && stageWon) {
         const stageProgress = this.gameState.advanceStage();
         this.audioManager.playLevelUpSound();
+        HapticManager.celebration();
         this.particleSystem.emitSmashDebris(this.player.group.position, [0xFFD700, 0x00E5FF, 0xFF4081, 0x76FF03]);
 
         if (stageProgress.nextStage) {
