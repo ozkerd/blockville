@@ -302,7 +302,11 @@ class BlockvilleApp {
   }
 }
 
-// Initialize when DOM is ready
-window.addEventListener('DOMContentLoaded', () => {
+// Initialize when DOM is ready or immediately if already loaded
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', () => {
+    new BlockvilleApp();
+  });
+} else {
   new BlockvilleApp();
-});
+}
