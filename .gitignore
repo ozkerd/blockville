@@ -19,3 +19,9 @@ graphify-out/
 ios/build/
 ios/App/build/
 ios/App/DerivedData/
+
+# Environment variables & secrets
+.env
+.env.*
+*.env
+
