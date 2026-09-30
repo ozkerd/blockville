@@ -151,6 +151,30 @@ export class AudioManager {
     osc.stop(this.ctx.currentTime + 0.28);
   }
 
+  public playDriftScreechSound(): void {
+    if (this.isMuted) return;
+    this.initContext();
+    if (!this.ctx) return;
+
+    // High friction tire screech & spray sound (sawtooth slide + modulated noise tone)
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(740, this.ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(520, this.ctx.currentTime + 0.15);
+    osc.frequency.exponentialRampToValueAtTime(180, this.ctx.currentTime + 0.4);
+
+    gain.gain.setValueAtTime(0.28, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.4);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start();
+    osc.stop(this.ctx.currentTime + 0.4);
+  }
+
   public playMountSound(): void {
     if (this.isMuted) return;
     this.initContext();

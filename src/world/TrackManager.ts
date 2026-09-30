@@ -245,21 +245,22 @@ export class TrackManager {
           // Handle Slick Rain Puddle / Ice Drift Hazard
           if (obs.type === 'slick_puddle') {
             obs.isSmashed = true;
-            if (player.movementState === 'sliding') {
-              // Successfully executed a sick powerslide / vehicle drift!
-              obs.mesh.visible = false;
+            obs.mesh.visible = false;
+            const isSliding = player.movementState === 'sliding';
+
+            if (isSliding) {
+              // Successfully executed an awesome power drift / hydro slide!
               this.gameState.addSmash();
-              this.audioManager.playSlideSound();
-              HapticManager.heavyImpact();
+              player.triggerDrift(Math.random() > 0.5 ? 1 : -1, true);
+              this.particleSystem.emitDriftSmokeSpray(obsWorldPos, true);
               this.particleSystem.emitGroundSparks(obsWorldPos, 0x00E5FF);
-              this.floatingText.spawn(obsWorldPos, 'SICK DRIFT! +100', '#00E5FF', '🌊', true);
+              this.floatingText.spawn(obsWorldPos, 'SICK DRIFT! 🏎️💨 +150', '#00E5FF', '🌊', true);
             } else {
               // Hit puddle without sliding: tire skid, water splash, and handling challenge!
-              this.audioManager.playVehicleDuckSound();
-              HapticManager.heavyImpact();
-              this.particleSystem.emitGroundSparks(obsWorldPos, 0xFFEB3B);
+              player.triggerDrift(Math.random() > 0.5 ? 1 : -1, true);
+              this.particleSystem.emitDriftSmokeSpray(obsWorldPos, true);
+              this.particleSystem.emitGroundSparks(obsWorldPos, 0xFF9100);
               this.floatingText.spawn(obsWorldPos, '⚠️ SLICK SKID! SLIDE TO DRIFT!', '#FF9100', '⚠️', true);
-              player.group.rotation.y += (Math.random() > 0.5 ? 0.32 : -0.32);
             }
             continue;
           }

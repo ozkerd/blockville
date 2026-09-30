@@ -429,23 +429,25 @@ export class TrackChunk {
         opacity: 0.75
       });
 
-      // Glossy water plane
-      const geom = new THREE.PlaneGeometry(2.6, 4.2);
+      // Glossy water plane with high visibility
+      const geom = new THREE.PlaneGeometry(2.7, 5.0);
       geom.rotateX(-Math.PI / 2);
       const puddle = new THREE.Mesh(geom, puddleMat);
-      puddle.position.y = 0.02;
+      puddle.position.y = 0.025;
       group.add(puddle);
 
-      // Warning hazard marker studs
-      const studMat = ToyMaterialFactory.getPlastic(0xFFEB3B, 0.2, 0.0);
-      [-1.1, 1.1].forEach((px) => {
-        const stud = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.08, 8), studMat);
-        stud.position.set(px, 0.04, -1.8);
-        group.add(stud);
+      // Bright caution border studs and neon skid guides
+      const studMat = ToyMaterialFactory.getPlastic(isSnow ? 0x00E5FF : 0xFFEB3B, 0.1, 0.0);
+      [-1.15, 1.15].forEach((px) => {
+        [-2.0, 0, 2.0].forEach((pz) => {
+          const stud = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.1, 10), studMat);
+          stud.position.set(px, 0.05, pz);
+          group.add(stud);
+        });
       });
 
-      hitboxOffsetMin.set(-1.1, 0, -1.8);
-      hitboxOffsetMax.set(1.1, 0.6, 1.8);
+      hitboxOffsetMin.set(-1.2, 0, -2.4);
+      hitboxOffsetMax.set(1.2, 0.8, 2.4);
       canSmash = true;
     } else {
       // Roadblock (heavy concrete toy barrier, red & white stripes)

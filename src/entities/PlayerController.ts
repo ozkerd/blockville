@@ -57,7 +57,11 @@ export class PlayerController {
   public boostCharges = 0;
   public magnetTimer = 0;
   public turboTimer = 0;
-  private scooterChargeTimer = 0;
+
+  // Drift mechanic & skid effects
+  public driftTimer = 0;
+  public driftDirection = 1; // 1 for right, -1 for left
+  public driftTireSmokeTimer = 0;
 
   // Run cycle animation timer
   private runCycleTime = 0;
@@ -140,7 +144,8 @@ export class PlayerController {
     this.boostCharges = 0;
     this.magnetTimer = 0;
     this.turboTimer = 0;
-    this.scooterChargeTimer = 0;
+    this.driftTimer = 0;
+    this.driftTireSmokeTimer = 0;
     this.runCycleTime = 0;
     this.rebuildMeshes();
     this.audioManager.stopVehicleEngine();
@@ -208,6 +213,22 @@ export class PlayerController {
       return true;
     }
     return false;
+  }
+
+  /**
+   * Triggers dynamic power drift / skid effect when sliding on slick surfaces or taking sharp turns
+   */
+  public triggerDrift(direction = 0, isPuddle = false): void {
+    this.driftTimer = 1.2;
+    this.driftDirection = direction !== 0 ? direction : (Math.random() > 0.5 ? 1 : -1);
+    this.audioManager.playDriftScreechSound();
+    HapticManager.heavyImpact();
+
+    // Burst initial smoke and sparks
+    const pos = this.group.position.clone();
+    pos.y = 0.08;
+    this.particleSystem.emitDriftSmokeSpray(pos, isPuddle);
+    this.particleSystem.emitGroundSparks(pos, isPuddle ? 0x00E5FF : 0xFFEB3B);
   }
 
   /**
@@ -290,15 +311,6 @@ export class PlayerController {
     const agility = CHARACTER_DEFS[this.characterId]?.laneAgilityBonus || 1.0;
     this.currentX = THREE.MathUtils.lerp(this.currentX, this.targetX, deltaTime * (14 * agility));
     const laneShiftProgress = (this.targetX - this.currentX) / LANE_WIDTH;
-
-    // Eco scooter passive charge
-    if (this.mode === 'in_vehicle' && this.vehicleId === 'scooter') {
-      this.scooterChargeTimer += deltaTime;
-      if (this.scooterChargeTimer >= 8.0) {
-        this.scooterChargeTimer = 0;
-        this.activateTurbo();
-      }
-    }
 
     // 2. Vertical jump/fall physics
     if (this.y > 0 || this.verticalVelocity !== 0) {
@@ -389,13 +401,35 @@ export class PlayerController {
       CharacterBuilder.poseInVehicle(this.avatarRig, laneShiftProgress, isDucking, isScooter);
     }
 
-    // Dynamic Turn Banking & Steering Yaw!
+    // Dynamic Turn Banking & Steering Yaw + Drift Angle!
     const isScooter = this.mode === 'in_vehicle' && this.vehicleId === 'scooter';
     const turnDelta = (this.targetX - this.currentX);
-    // Yaw: point nose dynamically towards target lane
-    const targetYaw = -turnDelta * (isScooter ? 0.32 : 0.22);
-    // Roll: lean into turn (Scooters lean heavily like real mopeds up to ~35 degrees!)
-    const targetRoll = -turnDelta * (isScooter ? 0.65 : (this.mode === 'in_vehicle' ? 0.32 : 0.24));
+    
+    // Normal banking
+    let targetYaw = -turnDelta * (isScooter ? 0.32 : 0.22);
+    let targetRoll = -turnDelta * (isScooter ? 0.65 : (this.mode === 'in_vehicle' ? 0.32 : 0.24));
+
+    // Power drift override & skid effects
+    if (this.driftTimer > 0) {
+      this.driftTimer -= deltaTime;
+      const driftRatio = Math.min(1.0, this.driftTimer / 0.8);
+      // Hard sideways counter-steer drift yaw (~38 degrees)
+      const driftAngle = (this.driftDirection * 0.68) * driftRatio;
+      targetYaw += driftAngle;
+      // Aggressive inward chassis roll lean
+      targetRoll -= (this.driftDirection * 0.35) * driftRatio;
+
+      // Continuous tire smoke & spark emission while drifting
+      this.driftTireSmokeTimer += deltaTime;
+      if (this.driftTireSmokeTimer >= 0.05) {
+        this.driftTireSmokeTimer = 0;
+        const driftGroundPos = this.group.position.clone();
+        driftGroundPos.y = 0.05;
+        driftGroundPos.x += (Math.random() - 0.5) * 0.4;
+        this.particleSystem.emitDriftSmokeSpray(driftGroundPos, false);
+        this.particleSystem.emitGroundSparks(driftGroundPos, 0xFFD54F);
+      }
+    }
 
     this.group.rotation.y = THREE.MathUtils.lerp(this.group.rotation.y, targetYaw, deltaTime * 14);
     this.group.rotation.z = THREE.MathUtils.lerp(this.group.rotation.z, targetRoll, deltaTime * 14);

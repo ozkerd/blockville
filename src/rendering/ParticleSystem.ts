@@ -157,6 +157,41 @@ export class ParticleSystem {
     }
   }
 
+  /**
+   * Spawns voluminous tire smoke, water rooster tails & drift skid plumes
+   */
+  public emitDriftSmokeSpray(position: THREE.Vector3, isWater = false): void {
+    const colors = isWater ? [0x81D4FA, 0xB3E5FC, 0xE1F5FE, 0xFFFFFF] : [0xE0E0E0, 0xF5F5F5, 0xEEEEEE, 0xFFEB3B];
+    const count = 7;
+    for (let i = 0; i < count; i++) {
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const mesh = this.getParticleMesh(false, color); // cube mesh for puffy block particles
+      mesh.position.copy(position);
+      mesh.position.x += (Math.random() - 0.5) * 1.2;
+      mesh.position.y = 0.08 + Math.random() * 0.25;
+      mesh.position.z += (Math.random() - 0.5) * 0.6;
+      mesh.scale.setScalar(0.7 + Math.random() * 0.6);
+
+      this.group.add(mesh);
+      this.particles.push({
+        mesh,
+        velocity: new THREE.Vector3(
+          (Math.random() - 0.5) * (isWater ? 6.5 : 4.5), // lateral spray
+          1.8 + Math.random() * (isWater ? 3.5 : 2.0),    // rooster tail upward arch
+          4.0 + Math.random() * 5.0                       // trail backward
+        ),
+        angularVelocity: new THREE.Vector3(
+          (Math.random() - 0.5) * 8,
+          (Math.random() - 0.5) * 8,
+          (Math.random() - 0.5) * 8
+        ),
+        life: 0,
+        maxLife: 0.45 + Math.random() * 0.3,
+        scaleInitial: mesh.scale.x
+      });
+    }
+  }
+
   public update(deltaTime: number): void {
     const gravity = -14.0;
 
