@@ -109,12 +109,19 @@
           <!-- Active Powerup Badges (Magnet, Shield, Boost) -->
           <div id="active-powerups" class="active-powerups"></div>
 
+          <!-- Floating Action Boost Button (Bottom Right) -->
+          <button id="btn-hud-boost" class="hud-boost-btn hidden" title="Nitro Boost (Press Space / Hold Screen / Tap)">
+            <span class="boost-icon">🚀</span>
+            <span class="boost-label">BOOST</span>
+            <span id="hud-boost-badge" class="boost-badge">x1</span>
+          </button>
+
           <!-- Action Hint overlay -->
           <div id="action-prompt" class="action-prompt hidden">VEHICLE READY!</div>
 
           <!-- Mobile Touch Swipe Pad (Invisible but interactive) -->
           <div id="touch-controls" class="touch-controls">
-            <div class="touch-hint">Swipe ⬅️ ➡️ to steer | ⬆️ Jump | ⬇️ Slide</div>
+            <div class="touch-hint">Swipe ⬅️ ➡️ steer | ⬆️ Jump | ⬇️ Slide | 🚀 Hold to Boost</div>
           </div>
         </div>
 
@@ -140,17 +147,17 @@
                 <button class="quick-chip active" data-char="nova" title="Nova (The Maker)">
                   <span class="chip-emoji">💜</span>
                   <span class="chip-name">Nova</span>
-                  <span class="chip-perk">+10% Speed</span>
+                  <span class="chip-perk">+15% Speed</span>
                 </button>
                 <button class="quick-chip" data-char="leo" title="Leo (The Baker)">
                   <span class="chip-emoji">🥐</span>
                   <span class="chip-name">Leo</span>
-                  <span class="chip-perk">+20% Ride</span>
+                  <span class="chip-perk">+35% Fuel & 2x Smash</span>
                 </button>
                 <button class="quick-chip" data-char="skye" title="Skye (The Explorer)">
                   <span class="chip-emoji">🥽</span>
                   <span class="chip-name">Skye</span>
-                  <span class="chip-perk">+35% Magnet</span>
+                  <span class="chip-perk">🧲 Permanent Magnet</span>
                 </button>
               </div>
 
@@ -159,17 +166,17 @@
                 <button class="quick-chip active" data-veh="van" title="Sweet-Treat Van">
                   <span class="chip-emoji">🍦</span>
                   <span class="chip-name">Van</span>
-                  <span class="chip-perk">Smash Bumper</span>
+                  <span class="chip-perk">Crash Armor Shield</span>
                 </button>
                 <button class="quick-chip" data-veh="buggy" title="Neon Buggy">
                   <span class="chip-emoji">🏎️</span>
                   <span class="chip-name">Buggy</span>
-                  <span class="chip-perk">Coin Magnet</span>
+                  <span class="chip-perk">3-Lane Magnet & 2x ⭐</span>
                 </button>
                 <button class="quick-chip" data-veh="scooter" title="Eco Scooter">
                   <span class="chip-emoji">🛵</span>
                   <span class="chip-name">Scooter</span>
-                  <span class="chip-perk">Turbo Shockwave</span>
+                  <span class="chip-perk">+25% Speed & Auto-Turbo</span>
                 </button>
               </div>
             </div>
@@ -208,6 +215,10 @@
           <div class="garage-panel glass-toy-card">
             <div class="modal-header">
               <h2>🛠️ TOY BOX GARAGE</h2>
+              <div class="garage-balance-row">
+                <span class="currency-pill gem-pill">💎 <strong id="garage-gems">0</strong></span>
+                <span class="currency-pill coin-pill">⭐ <strong id="garage-coins">0</strong></span>
+              </div>
               <button id="btn-close-garage" class="toy-btn close-btn">✕</button>
             </div>
 
@@ -224,24 +235,24 @@
                   <div class="card-icon">💜</div>
                   <div class="card-title">Nova</div>
                   <div class="card-role">The Maker</div>
-                  <div class="card-desc">Lilac hoodie, turquoise kicks, agile lane changes.</div>
-                  <div class="card-perk">⚡ +10% Acceleration</div>
+                  <div class="card-desc">Lilac hoodie, turquoise kicks, swift lane agile dash.</div>
+                  <div class="card-perk">⚡ +15% Speed & Ultra Agility</div>
                 </div>
                 <!-- Leo Card -->
                 <div class="roster-card" data-id="leo">
                   <div class="card-icon">🥐</div>
                   <div class="card-title">Leo</div>
                   <div class="card-role">The Baker</div>
-                  <div class="card-desc">Baker apron, striped shirt, quick roller skates.</div>
-                  <div class="card-perk">🧁 +15% Sweet Van Time</div>
+                  <div class="card-desc">Baker apron, striped shirt, expert toy mechanic.</div>
+                  <div class="card-perk">🧁 +35% Fuel & 2x Smash Multiplier</div>
                 </div>
                 <!-- Skye Card -->
                 <div class="roster-card" data-id="skye">
                   <div class="card-icon">🥽</div>
                   <div class="card-title">Skye</div>
                   <div class="card-role">The Explorer</div>
-                  <div class="card-desc">Sunset orange jacket, utility belt & aviator goggles.</div>
-                  <div class="card-perk">🧲 +20% Coin Magnet Range</div>
+                  <div class="card-desc">Sunset jacket, utility belt & aviator goggles.</div>
+                  <div class="card-perk">🧲 Permanent Coin Magnet Aura</div>
                 </div>
               </div>
             </div>
@@ -255,7 +266,7 @@
                   <div class="card-title">Sweet-Treat Van</div>
                   <div class="card-role">Heavy Duty Delivery</div>
                   <div class="card-desc">Spinning rooftop cupcake & block-burst bumper shield.</div>
-                  <div class="card-perk">💥 Smashes crates & cones!</div>
+                  <div class="card-perk">💥 Bumper Smash & Crash Armor Shield</div>
                 </div>
                 <!-- Neon Buggy Card -->
                 <div class="roster-card" data-id="buggy">
@@ -263,15 +274,15 @@
                   <div class="card-title">Neon Buggy</div>
                   <div class="card-role">All-Terrain Cruiser</div>
                   <div class="card-desc">Teal & yellow open-cockpit dune buggy with roll cage.</div>
-                  <div class="card-perk">🧲 Integrated Coin Magnet Aura</div>
+                  <div class="card-perk">🧲 3-Lane Coin Magnet & 2x Coins!</div>
                 </div>
                 <!-- Eco Scooter Card -->
                 <div class="roster-card" data-id="scooter">
                   <div class="card-icon">🛵</div>
                   <div class="card-title">Eco Scooter</div>
                   <div class="card-role">Retro Turbo Moped</div>
-                  <div class="card-desc">Mint-green electric moped with aerodynamic side panniers.</div>
-                  <div class="card-perk">🚀 Turbo Lane Shockwave</div>
+                  <div class="card-desc">Mint-green electric moped with extreme leaning agility.</div>
+                  <div class="card-perk">🚀 +25% Speed & Auto-Turbo Thruster</div>
                 </div>
               </div>
 
@@ -304,8 +315,8 @@
               <div class="stage-item active" data-stage="1">
                 <div class="stage-badge">Stage 1</div>
                 <div class="stage-details">
-                  <div class="stage-name">Heartlake Stroll</div>
-                  <div class="stage-goal">Collect 50 Star Coins & Run 500m</div>
+                  <div class="stage-name">Sunburst Stroll</div>
+                  <div class="stage-goal">Collect 35 Star Coins & Run 1,200m</div>
                 </div>
                 <button class="toy-btn primary-btn btn-start-stage">PLAY</button>
               </div>
@@ -313,7 +324,7 @@
                 <div class="stage-badge">Stage 2</div>
                 <div class="stage-details">
                   <div class="stage-name">Sweet Smash Delivery</div>
-                  <div class="stage-goal">Mount the Sweet-Treat Van & Smash 6 Crates</div>
+                  <div class="stage-goal">Mount the Sweet-Treat Van & Smash 5 Crates</div>
                 </div>
                 <button class="toy-btn primary-btn btn-start-stage">PLAY</button>
               </div>
@@ -321,7 +332,7 @@
                 <div class="stage-badge">Stage 3</div>
                 <div class="stage-details">
                   <div class="stage-name">Pier Turbo Cruise</div>
-                  <div class="stage-goal">Survive 1,500m in Amusement Pier with 2x Multiplier</div>
+                  <div class="stage-goal">Survive 4,000m with 10 Smashes & 130 Coins</div>
                 </div>
                 <button class="toy-btn primary-btn btn-start-stage">PLAY</button>
               </div>
@@ -333,24 +344,30 @@
         <div id="instructions-screen" class="modal-screen hidden">
           <div class="info-panel glass-toy-card">
             <div class="modal-header">
-              <h2>🎮 HOW TO PLAY</h2>
+              <h2>🎮 HOW TO PLAY & PERKS</h2>
               <button id="btn-close-instructions" class="toy-btn close-btn">✕</button>
             </div>
             <div class="instructions-content">
               <div class="instruction-row">
-                <span class="key-badge">A / D</span> or <span class="key-badge">⬅️ ➡️</span> or <strong>Swipe Left/Right</strong>: Dodge across 3 lanes
+                <span class="key-badge">A / D</span> or <span class="key-badge">⬅️ ➡️</span> / <strong>Swipe Left-Right</strong>: Steer across lanes
               </div>
               <div class="instruction-row">
-                <span class="key-badge">W / Space</span> or <span class="key-badge">⬆️</span> or <strong>Swipe Up</strong>: Jump over toy barriers & crates
+                <span class="key-badge">W / ⬆️</span> / <strong>Swipe Up</strong>: Jump over hurdles & barriers
               </div>
               <div class="instruction-row">
-                <span class="key-badge">S</span> or <span class="key-badge">⬇️</span> or <strong>Swipe Down</strong>: Slide under high arches & signs
+                <span class="key-badge">S / ⬇️</span> / <strong>Swipe Down</strong>: Slide under arches & <strong>DRIFT through rain puddles & ice!</strong>
               </div>
               <div class="instruction-row">
-                <span class="key-badge">🔑 Vehicle Key</span>: Mount your toy vehicle! Wider FOV, spring suspension, speed burst & super abilities!
+                <span class="key-badge">SPACE / Hold Screen</span>: <strong>🚀 NITRO BOOST!</strong> Overdrive burst that smashes obstacles!
               </div>
               <div class="instruction-row">
-                <span class="key-badge">💥 Smashing</span>: Sweet-Treat Van obliterates crates & cones! Buggy attracts coins with magnet aura!
+                <span class="key-badge">🔑 Vehicle Key</span>: Collect to mount your chosen ride! Van gives <strong>Crash Armor</strong>, Buggy gives <strong>3-Lane Magnet & 2x Coins</strong>, Scooter gives <strong>Turbo Speed</strong>!
+              </div>
+              <div class="instruction-row">
+                <span class="key-badge">🔧 Wrench</span>: Adds +10 seconds of vehicle fuel time!
+              </div>
+              <div class="instruction-row">
+                <span class="key-badge">💎 Diamond Gems</span>: Spend in the <strong>Toy Box Garage</strong> to permanently unlock new avatars & rides!
               </div>
             </div>
             <button id="btn-instructions-gotit" class="toy-btn primary-btn">LET'S ROLL!</button>

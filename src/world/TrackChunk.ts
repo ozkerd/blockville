@@ -238,6 +238,11 @@ export class TrackChunk {
   }
 
   private selectRandomObstacle(level = 1): ObstacleType {
+    // In rainy city or snowy alpine forest: spawn slick puddles/ice ~1-2 times per stage (Can You Slide? mechanic)
+    if ((this.biome === 'plaza' || this.biome === 'forest') && (this.chunkIndex % 5 === 2)) {
+      return 'slick_puddle';
+    }
+
     const r = Math.random();
     if (level === 1) {
       if (r < 0.35) return 'low_barrier';
@@ -245,34 +250,35 @@ export class TrackChunk {
       if (r < 0.85) return 'crate_stack';
       return 'traffic_cone';
     } else if (level === 2) {
-      if (r < 0.25) return 'low_barrier';
-      if (r < 0.45) return 'high_arch';
-      if (r < 0.65) return 'crate_stack';
-      if (r < 0.82) return 'robot_patrol';
+      if (r < 0.22) return 'low_barrier';
+      if (r < 0.40) return 'high_arch';
+      if (r < 0.60) return 'crate_stack';
+      if (r < 0.80) return 'robot_patrol';
       return 'roadblock';
     } else if (level === 3) {
-      if (r < 0.22) return 'low_barrier';
-      if (r < 0.42) return 'laser_gate';
-      if (r < 0.62) return 'robot_patrol';
-      if (r < 0.80) return 'roadblock';
+      if (r < 0.20) return 'low_barrier';
+      if (r < 0.40) return 'laser_gate';
+      if (r < 0.60) return 'robot_patrol';
+      if (r < 0.78) return 'roadblock';
       return 'crate_stack';
     } else {
       // Level 4+
-      if (r < 0.28) return 'laser_gate';
-      if (r < 0.52) return 'robot_patrol';
-      if (r < 0.76) return 'roadblock';
-      if (r < 0.88) return 'low_barrier';
+      if (r < 0.26) return 'laser_gate';
+      if (r < 0.50) return 'robot_patrol';
+      if (r < 0.74) return 'roadblock';
+      if (r < 0.86) return 'low_barrier';
       return 'crate_stack';
     }
   }
 
   private selectRandomPickup(): PickUpType {
     const r = Math.random();
-    if (r < 0.65) return 'star_coin';
-    if (r < 0.78) return 'diamond_gem';
-    if (r < 0.88) return 'vehicle_key'; // Good chance to hop into vehicles!
-    if (r < 0.94) return 'toy_wrench';
-    return 'coin_magnet';
+    if (r < 0.58) return 'star_coin';
+    if (r < 0.72) return 'diamond_gem';
+    if (r < 0.83) return 'vehicle_key'; // Keys to hop into vehicles!
+    if (r < 0.92) return 'nitro_boost'; // Rocket Boost for Space / Hold Screen!
+    if (r < 0.96) return 'toy_wrench';  // Extra vehicle fuel
+    return 'heart_shield';
   }
 
   private spawnObstacle(type: ObstacleType, lane: number, zLocal: number): void {
@@ -412,6 +418,35 @@ export class TrackChunk {
       hitboxOffsetMin.set(-0.45, 0, -0.45);
       hitboxOffsetMax.set(0.45, 0.75, 0.45);
       canSmash = true;
+    } else if (type === 'slick_puddle') {
+      // Wet Rain Puddle or Ice Patch (Slide / Drift to clear with style!)
+      const isSnow = this.biome === 'forest';
+      const puddleMat = new THREE.MeshStandardMaterial({
+        color: isSnow ? 0xE1F5FE : 0x4FC3F7,
+        roughness: 0.05,
+        metalness: 0.1,
+        transparent: true,
+        opacity: 0.75
+      });
+
+      // Glossy water plane
+      const geom = new THREE.PlaneGeometry(2.6, 4.2);
+      geom.rotateX(-Math.PI / 2);
+      const puddle = new THREE.Mesh(geom, puddleMat);
+      puddle.position.y = 0.02;
+      group.add(puddle);
+
+      // Warning hazard marker studs
+      const studMat = ToyMaterialFactory.getPlastic(0xFFEB3B, 0.2, 0.0);
+      [-1.1, 1.1].forEach((px) => {
+        const stud = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.08, 8), studMat);
+        stud.position.set(px, 0.04, -1.8);
+        group.add(stud);
+      });
+
+      hitboxOffsetMin.set(-1.1, 0, -1.8);
+      hitboxOffsetMax.set(1.1, 0.6, 1.8);
+      canSmash = true;
     } else {
       // Roadblock (heavy concrete toy barrier, red & white stripes)
       const barrierMat = ToyMaterialFactory.getPlastic(0xD50000, 0.25, 0.0);
@@ -508,6 +543,22 @@ export class TrackChunk {
       cone.rotation.z = Math.PI;
       cone.position.set(0, -0.12, 0);
       group.add(cone);
+    } else if (type === 'nitro_boost') {
+      // Glowing Rocket Nitro Canister (Space / Hold Screen to boost!)
+      const canMat = ToyMaterialFactory.getPlastic(0x00E5FF, 0.15, 0.0);
+      const capMat = ToyMaterialFactory.getPlastic(0xFF6D00, 0.15, 0.0);
+      const ringMat = ToyMaterialFactory.getPlastic(0xFFEA00, 0.1, 0.0);
+
+      const can = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.65, 12), canMat);
+      group.add(can);
+
+      const cap = new THREE.Mesh(new THREE.ConeGeometry(0.25, 0.35, 12), capMat);
+      cap.position.y = 0.45;
+      group.add(cap);
+
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.04, 6, 12), ringMat);
+      ring.rotation.x = Math.PI / 2;
+      group.add(ring);
     } else {
       // Toy Wrench (Repair / Extend Vehicle)
       const wrenchMat = ToyMaterialFactory.Chrome;

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { SceneRenderer } from './rendering/SceneRenderer';
 import { AudioManager } from './core/AudioManager';
 import { InputManager } from './core/InputManager';
-import { GameState } from './core/GameState';
+import { GameState, VEHICLE_DEFS } from './core/GameState';
 import { ParticleSystem } from './rendering/ParticleSystem';
 import { CameraController } from './core/CameraController';
 import { PlayerController } from './entities/PlayerController';
@@ -121,6 +121,10 @@ class BlockvilleApp {
       this.startRun();
     };
 
+    this.uiManager.onTriggerBoost = () => {
+      this.inputManager.triggerBoost();
+    };
+
     this.uiManager.onQuitToMenu = () => {
       this.appState = 'menu';
       this.inputManager.setEnabled(false);
@@ -189,11 +193,23 @@ class BlockvilleApp {
         else if (action === 'right') this.player.moveRight();
         else if (action === 'jump') this.player.jump();
         else if (action === 'slide') this.player.slide();
+        else if (action === 'boost') {
+          if (this.player.useBoost()) {
+            this.floatingText.spawn(this.player.group.position, 'NITRO BOOST! 🚀', '#00E5FF', '⚡', true);
+            this.cameraController.addTrauma(0.35);
+          } else {
+            // If Space was pressed without stored boost, act as Jump
+            this.player.jump();
+          }
+        }
         action = this.inputManager.popAction();
       }
 
-      // Progression update
-      this.gameState.updateDistanceAndSpeed(deltaTime, this.player.turboTimer > 0 ? 1.4 : 1.0);
+      // Progression update: consider vehicle speed multiplier and nitro boost
+      const isVehicleMode = this.player.mode === 'in_vehicle';
+      const vehSpeedMult = isVehicleMode ? (VEHICLE_DEFS[this.player.vehicleId]?.speedMultiplier || 1.0) : 1.0;
+      const turboMult = this.player.turboTimer > 0 ? 1.5 : 1.0;
+      this.gameState.updateDistanceAndSpeed(deltaTime, vehSpeedMult * turboMult);
 
       // Check dynamic Level Up progression (every ~1.5 minutes!)
       const levelUpDef = this.gameState.checkLevelUp();

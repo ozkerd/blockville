@@ -20,7 +20,8 @@ export type ObstacleType =
   | 'fountain_divider' // Must lane steer
   | 'roadblock'        // Heavy immovable - ejects vehicle or lethal on foot
   | 'laser_gate'       // High-voltage laser grid (slide under)
-  | 'robot_patrol';    // Moving toy sweeper patrolling across lanes
+  | 'robot_patrol'     // Moving toy sweeper patrolling across lanes
+  | 'slick_puddle';    // Wet rain puddle or ice patch - slide/drift to clear!
 
 export interface LevelDef {
   levelNumber: number;
@@ -40,7 +41,8 @@ export type PickUpType =
   | 'vehicle_key' 
   | 'heart_shield' 
   | 'toy_wrench' 
-  | 'coin_magnet';
+  | 'coin_magnet'
+  | 'nitro_boost';
 
 export interface StageConfig {
   id: number;
@@ -76,6 +78,10 @@ export interface CharacterDef {
   speedBonus: number;
   vehicleDurationBonus: number;
   magnetRangeBonus: number;
+  hasPermanentMagnet: boolean;
+  laneAgilityBonus: number;
+  smashMultiplier: number;
+  gemPrice: number;
 }
 
 export interface VehicleDef {
@@ -87,5 +93,10 @@ export interface VehicleDef {
   hasBumperShield: boolean;
   hasMagnetAura: boolean;
   hasTurboShockwave: boolean;
+  absorbsRoadblocks: boolean;
+  coinMultiplier: number;
+  speedMultiplier: number;
   baseDurationSeconds: number;
+  gemPrice: number;
 }
+

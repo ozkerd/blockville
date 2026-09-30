@@ -89,7 +89,6 @@ export class CharacterBuilder {
       const hoodieMat = ToyMaterialFactory.getPlastic(0xBA68C8, 0.25, 0.0); // Lilac
       const denimMat = ToyMaterialFactory.getPlastic(0x1976D2, 0.3, 0.0);  // Denim
       const shoeMat = ToyMaterialFactory.getPlastic(0x00E5FF, 0.18, 0.0);  // Turquoise
-      const hairMat = ToyMaterialFactory.getPlastic(0x3E2723, 0.2, 0.0);  // Dark Espresso
 
       // Torso mesh (hoodie)
       const torsoMesh = ToyMaterialFactory.createBlock(0.62, 0.65, 0.38, hoodieMat);
@@ -100,23 +99,64 @@ export class CharacterBuilder {
       pocket.position.set(0, -0.15, 0.20);
       torso.add(pocket);
 
-      // Hair & Ponytail
+      // Hair & Ponytail (Unmistakably female: long hair down the back + bouncy ponytail + pink ribbon bow)
+      const hairMat = ToyMaterialFactory.getPlastic(0x3E2723, 0.2, 0.0); // Rich espresso
+      const ribbonMat = ToyMaterialFactory.getPlastic(0xFF4081, 0.15, 0.0); // Hot pink bow
+
+      // Top hair volume
       const hairTop = ToyMaterialFactory.createBlock(0.48, 0.22, 0.48, hairMat);
       hairTop.position.set(0, 0.22, 0);
       head.add(hairTop);
 
-      const ponytailBase = new THREE.Mesh(new THREE.SphereGeometry(0.14, 10, 10), hairMat);
-      ponytailBase.position.set(0, 0.24, -0.26);
+      // Long hair cascading down the back of head and neck
+      const hairBack = ToyMaterialFactory.createBlock(0.44, 0.38, 0.14, hairMat);
+      hairBack.position.set(0, -0.04, -0.22);
+      head.add(hairBack);
+
+      // Side hair locks framing face
+      [-0.23, 0.23].forEach((sx) => {
+        const sideLock = ToyMaterialFactory.createBlock(0.08, 0.32, 0.32, hairMat);
+        sideLock.position.set(sx, 0.02, 0);
+        head.add(sideLock);
+      });
+
+      // High ponytail base
+      const ponytailBase = new THREE.Mesh(new THREE.SphereGeometry(0.15, 10, 10), hairMat);
+      ponytailBase.position.set(0, 0.25, -0.26);
       head.add(ponytailBase);
 
-      const hairTie = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.03, 8, 12), shoeMat);
-      hairTie.position.set(0, 0.24, -0.24);
-      head.add(hairTie);
+      // Hot Pink Hair Bow (prominently visible from behind in 3rd person)
+      const bowKnot = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), ribbonMat);
+      bowKnot.position.set(0, 0.28, -0.29);
+      head.add(bowKnot);
 
-      const tail = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.45, 10), hairMat);
-      tail.rotation.x = -Math.PI / 3;
-      tail.position.set(0, 0.08, -0.42);
-      head.add(tail);
+      [-0.11, 0.11].forEach((bx) => {
+        const bowLoop = ToyMaterialFactory.createBlock(0.12, 0.09, 0.06, ribbonMat);
+        bowLoop.position.set(bx, 0.28, -0.29);
+        bowLoop.rotation.z = (bx > 0 ? 0.35 : -0.35);
+        head.add(bowLoop);
+      });
+
+      // Ribbon tails dangling down the ponytail
+      [-0.06, 0.06].forEach((rx) => {
+        const tailRibbon = ToyMaterialFactory.createBlock(0.05, 0.22, 0.03, ribbonMat);
+        tailRibbon.position.set(rx, 0.16, -0.30);
+        tailRibbon.rotation.z = (rx > 0 ? -0.2 : 0.2);
+        tailRibbon.rotation.x = -0.25;
+        head.add(tailRibbon);
+      });
+
+      // Long Bouncy Ponytail strands curving down
+      const tailSegment1 = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.10, 0.35, 10), hairMat);
+      tailSegment1.position.set(0, 0.12, -0.38);
+      tailSegment1.rotation.x = -0.55;
+      head.add(tailSegment1);
+
+      const tailSegment2 = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.40, 10), hairMat);
+      tailSegment2.position.set(0, -0.06, -0.46);
+      tailSegment2.rotation.x = -0.35;
+      head.add(tailSegment2);
+
 
       // Arms (Lilac sleeves + skin hands)
       [-1, 1].forEach((dir) => {
@@ -247,10 +287,28 @@ export class CharacterBuilder {
       pouch2.position.set(0.24, -0.28, 0.20);
       torso.add(pouch2);
 
-      // Hair & Aviator Goggles
+      // Hair & Aviator Goggles (Long explorer hair + twin braids + cyan bands)
       const hairMesh = ToyMaterialFactory.createBlock(0.48, 0.30, 0.48, hairMat);
       hairMesh.position.set(0, 0.16, 0);
       head.add(hairMesh);
+
+      // Long hair down back
+      const skyeHairBack = ToyMaterialFactory.createBlock(0.44, 0.38, 0.14, hairMat);
+      skyeHairBack.position.set(0, -0.04, -0.22);
+      head.add(skyeHairBack);
+
+      // Twin braided pigtails on sides
+      [-0.22, 0.22].forEach((bx) => {
+        const braid = ToyMaterialFactory.createBlock(0.10, 0.36, 0.12, hairMat);
+        braid.position.set(bx, -0.12, -0.16);
+        braid.rotation.z = (bx > 0 ? -0.15 : 0.15);
+        head.add(braid);
+
+        const tie = ToyMaterialFactory.createBlock(0.12, 0.05, 0.14, lensMat); // Cyan hair tie
+        tie.position.set(bx * 1.05, -0.26, -0.16);
+        head.add(tie);
+      });
+
 
       // Goggles on forehead
       const goggleFrame = ToyMaterialFactory.createBlock(0.46, 0.12, 0.12, goggleMat);

@@ -54,12 +54,15 @@ export class UIManager {
   private actionPrompt!: HTMLElement;
   private menuBestDistance!: HTMLElement;
   private menuBestScore!: HTMLElement;
+  private btnHudBoost!: HTMLElement;
+  private hudBoostBadge!: HTMLElement;
 
   // Callbacks
   public onStartGame: (mode: 'endless' | 'stage', stageIdx?: number) => void = () => {};
   public onPauseGame: () => void = () => {};
   public onResumeGame: () => void = () => {};
   public onRestartGame: () => void = () => {};
+  public onTriggerBoost: () => void = () => {};
   public onQuitToMenu: () => void = () => {};
 
   constructor(gameState: GameState, player: PlayerController, audioManager: AudioManager) {
@@ -116,6 +119,8 @@ export class UIManager {
     this.actionPrompt = document.getElementById('action-prompt')!;
     this.menuBestDistance = document.getElementById('menu-best-distance')!;
     this.menuBestScore = document.getElementById('menu-best-score')!;
+    this.btnHudBoost = document.getElementById('btn-hud-boost')!;
+    this.hudBoostBadge = document.getElementById('hud-boost-badge')!;
   }
 
   private bindEvents(): void {
@@ -128,6 +133,11 @@ export class UIManager {
     // Pause Button
     this.btnPause.addEventListener('click', () => {
       this.showPauseModal();
+    });
+
+    // HUD Boost button (mobile tap or mouse click)
+    this.btnHudBoost?.addEventListener('click', () => {
+      this.onTriggerBoost();
     });
 
     // Main Menu: Play Endless
@@ -326,6 +336,16 @@ export class UIManager {
     const levelPct = Math.min(100, Math.max(0, (this.gameState.levelDistance / currentDef.targetDistance) * 100));
     if (this.levelProgressBar) this.levelProgressBar.style.width = `${levelPct}%`;
     if (this.levelFraction) this.levelFraction.innerText = `${Math.floor(this.gameState.levelDistance)} / ${currentDef.targetDistance}m`;
+
+    // Boost Button in HUD
+    if (this.btnHudBoost && this.hudBoostBadge) {
+      if (this.player.boostCharges > 0) {
+        this.btnHudBoost.classList.remove('hidden');
+        this.hudBoostBadge.innerText = `x${this.player.boostCharges}`;
+      } else {
+        this.btnHudBoost.classList.add('hidden');
+      }
+    }
 
     // Vehicle Meter
     if (this.player.mode === 'in_vehicle') {

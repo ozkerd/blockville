@@ -147,10 +147,13 @@ export class TrackManager {
     const vehDef = VEHICLE_DEFS[player.vehicleId];
     const charDef = CHARACTER_DEFS[player.characterId];
 
-    // Magnet aura range
-    const baseMagnetRange = 6.0;
-    const hasMagnet = (isVehicle && vehDef.hasMagnetAura) || player.magnetTimer > 0;
-    const magnetRange = baseMagnetRange * charDef.magnetRangeBonus;
+    // Magnet aura range: Skye has a built-in permanent coin magnet!
+    const isSkye = charDef.hasPermanentMagnet;
+    const hasMagnet = isSkye || (isVehicle && vehDef.hasMagnetAura) || player.magnetTimer > 0;
+    const baseMagnetRange = isSkye ? 5.5 : 6.0;
+    const magnetRange = (isVehicle && vehDef.hasMagnetAura) 
+      ? 8.0 
+      : baseMagnetRange * charDef.magnetRangeBonus;
 
     for (const chunk of this.chunks) {
       // Skip chunks far from player
@@ -170,7 +173,7 @@ export class TrackManager {
           const distToPlayer = pickupWorldPos.distanceTo(playerPos);
           if (distToPlayer < magnetRange) {
             const localPlayerPos = chunk.group.worldToLocal(playerPos.clone());
-            pickup.mesh.position.lerp(localPlayerPos, 0.22);
+            pickup.mesh.position.lerp(localPlayerPos, 0.24);
           }
         }
 
@@ -180,18 +183,24 @@ export class TrackManager {
           pickup.mesh.visible = false;
 
           if (pickup.type === 'star_coin') {
-            this.gameState.addCoins(1);
+            const coinCount = isVehicle ? (vehDef.coinMultiplier || 1) : 1;
+            this.gameState.addCoins(coinCount);
             this.audioManager.playCoinSound();
             HapticManager.lightImpact();
             this.particleSystem.emitPickupSparkles(pickupWorldPos, 0xFFD700);
-            const pts = 15 * this.gameState.multiplier;
-            this.floatingText.spawn(pickupWorldPos, `+${pts}`, '#FFD700', '⭐');
+            const pts = 15 * this.gameState.multiplier * coinCount;
+            this.floatingText.spawn(pickupWorldPos, `+${pts}${coinCount > 1 ? ' (2x!)' : ''}`, '#FFD700', '⭐');
           } else if (pickup.type === 'diamond_gem') {
             this.gameState.addGems(1);
             this.audioManager.playGemSound();
             HapticManager.mediumImpact();
             this.particleSystem.emitPickupSparkles(pickupWorldPos, 0x00E5FF);
-            this.floatingText.spawn(pickupWorldPos, '+100', '#00E5FF', '💎', true);
+            this.floatingText.spawn(pickupWorldPos, '+100 (💎+1)', '#00E5FF', '💎', true);
+          } else if (pickup.type === 'nitro_boost') {
+            player.addBoostCharge();
+            HapticManager.heavyImpact();
+            this.particleSystem.emitPickupSparkles(pickupWorldPos, 0x00E5FF);
+            this.floatingText.spawn(pickupWorldPos, '+1 BOOST [SPACE]!', '#00E5FF', '🚀', true);
           } else if (pickup.type === 'vehicle_key') {
             player.mountVehicle();
             HapticManager.heavyImpact();
@@ -233,6 +242,28 @@ export class TrackManager {
             continue; // Safely slided under!
           }
 
+          // Handle Slick Rain Puddle / Ice Drift Hazard
+          if (obs.type === 'slick_puddle') {
+            obs.isSmashed = true;
+            if (player.movementState === 'sliding') {
+              // Successfully executed a sick powerslide / vehicle drift!
+              obs.mesh.visible = false;
+              this.gameState.addSmash();
+              this.audioManager.playSlideSound();
+              HapticManager.heavyImpact();
+              this.particleSystem.emitGroundSparks(obsWorldPos, 0x00E5FF);
+              this.floatingText.spawn(obsWorldPos, 'SICK DRIFT! +100', '#00E5FF', '🌊', true);
+            } else {
+              // Hit puddle without sliding: tire skid, water splash, and handling challenge!
+              this.audioManager.playVehicleDuckSound();
+              HapticManager.heavyImpact();
+              this.particleSystem.emitGroundSparks(obsWorldPos, 0xFFEB3B);
+              this.floatingText.spawn(obsWorldPos, '⚠️ SLICK SKID! SLIDE TO DRIFT!', '#FF9100', '⚠️', true);
+              player.group.rotation.y += (Math.random() > 0.5 ? 0.32 : -0.32);
+            }
+            continue;
+          }
+
           // In-Vehicle collisions:
           if (isVehicle) {
             // Active Turbo bulldozes through all obstacles
@@ -256,6 +287,19 @@ export class TrackManager {
               HapticManager.mediumImpact();
               this.particleSystem.emitSmashDebris(obsWorldPos);
               this.floatingText.spawn(obsWorldPos, '+50', '#FF7043', '💥');
+              continue;
+            }
+
+            // Sweet-Treat Van: Crash Armor absorbs 1 heavy collision without crashing!
+            if (player.vanArmorShield) {
+              player.vanArmorShield = false;
+              obs.isSmashed = true;
+              obs.mesh.visible = false;
+              this.gameState.addSmash();
+              this.audioManager.playSmashSound();
+              HapticManager.heavyImpact();
+              this.particleSystem.emitSmashDebris(obsWorldPos, [0xFFD54F, 0xFF69B4, 0x00E5FF]);
+              this.floatingText.spawn(obsWorldPos, 'ARMOR SAVED!', '#FFD54F', '🛡️', true);
               continue;
             }
 

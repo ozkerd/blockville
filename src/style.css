@@ -1109,3 +1109,121 @@ html, body {
 .score-txt {
   letter-spacing: 0.5px;
 }
+
+/* Floating Action Boost Button (Bottom Right) */
+.hud-boost-btn {
+  position: absolute;
+  bottom: 24px;
+  right: 20px;
+  background: linear-gradient(135deg, #00E5FF, #00B0FF);
+  border: 3px solid #FFFFFF;
+  border-radius: 30px;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(0, 229, 255, 0.6), 0 4px 0 #0091EA;
+  cursor: pointer;
+  z-index: 25;
+  animation: boostPulse 1.2s infinite alternate ease-in-out;
+  transition: transform 0.12s ease;
+}
+
+.hud-boost-btn:active {
+  transform: translateY(3px) scale(0.96);
+  box-shadow: 0 2px 10px rgba(0, 229, 255, 0.6);
+}
+
+.hud-boost-btn .boost-icon {
+  font-size: 1.4rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
+.hud-boost-btn .boost-label {
+  font-family: var(--font-family);
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #FFFFFF;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hud-boost-btn .boost-badge {
+  background: #FFD600;
+  color: #263238;
+  font-weight: 900;
+  font-size: 0.85rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes boostPulse {
+  0% { transform: scale(1.0); box-shadow: 0 8px 24px rgba(0, 229, 255, 0.5); }
+  100% { transform: scale(1.06); box-shadow: 0 12px 32px rgba(0, 229, 255, 0.85); }
+}
+
+/* Garage Balance & Currency Pills */
+.garage-balance-row {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  margin-right: 12px;
+}
+
+.currency-pill {
+  background: white;
+  border: 2px solid #ECEFF1;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #263238;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.gem-pill {
+  border-color: #80D8FF;
+  background: #E1F5FE;
+  color: #0277BD;
+}
+
+.coin-pill {
+  border-color: #FFE082;
+  background: #FFF8E1;
+  color: #F57F17;
+}
+
+/* Locked Card Badges */
+.roster-card.locked {
+  opacity: 0.82;
+  border-color: #B0BEC5;
+  background: #ECEFF1;
+}
+
+.roster-card .lock-tag {
+  margin-top: 6px;
+  background: linear-gradient(135deg, #FF7043, #D84315);
+  color: white;
+  font-weight: 900;
+  font-size: 0.72rem;
+  padding: 4px 8px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(216, 67, 21, 0.35);
+  letter-spacing: 0.5px;
+}
+
+.shake-anim {
+  animation: cardShake 0.35s ease-in-out;
+}
+
+@keyframes cardShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+

@@ -55,12 +55,26 @@ export class GarageView {
     charCards.forEach((card) => {
       card.addEventListener('click', () => {
         const id = card.getAttribute('data-id') as CharacterId;
-        if (id && CHARACTER_DEFS[id]) {
-          this.selectedCharacter = id;
-          charCards.forEach((c) => c.classList.remove('active'));
-          card.classList.add('active');
-          this.syncShowcase();
+        if (!id || !CHARACTER_DEFS[id]) return;
+
+        if (!this.gameState.isCharacterUnlocked(id)) {
+          // Attempt to purchase with Gems
+          const success = this.gameState.unlockCharacter(id);
+          if (success) {
+            this.selectedCharacter = id;
+            this.refreshCardLocks();
+            this.syncShowcase();
+          } else {
+            card.classList.add('shake-anim');
+            setTimeout(() => card.classList.remove('shake-anim'), 400);
+          }
+          return;
         }
+
+        this.selectedCharacter = id;
+        charCards.forEach((c) => c.classList.remove('active'));
+        card.classList.add('active');
+        this.syncShowcase();
       });
     });
 
@@ -69,12 +83,26 @@ export class GarageView {
     vehCards.forEach((card) => {
       card.addEventListener('click', () => {
         const id = card.getAttribute('data-id') as VehicleId;
-        if (id && VEHICLE_DEFS[id]) {
-          this.selectedVehicle = id;
-          vehCards.forEach((c) => c.classList.remove('active'));
-          card.classList.add('active');
-          this.syncShowcase();
+        if (!id || !VEHICLE_DEFS[id]) return;
+
+        if (!this.gameState.isVehicleUnlocked(id)) {
+          // Attempt to purchase with Gems
+          const success = this.gameState.unlockVehicle(id);
+          if (success) {
+            this.selectedVehicle = id;
+            this.refreshCardLocks();
+            this.syncShowcase();
+          } else {
+            card.classList.add('shake-anim');
+            setTimeout(() => card.classList.remove('shake-anim'), 400);
+          }
+          return;
         }
+
+        this.selectedVehicle = id;
+        vehCards.forEach((c) => c.classList.remove('active'));
+        card.classList.add('active');
+        this.syncShowcase();
       });
     });
 
@@ -104,20 +132,71 @@ export class GarageView {
     this.selectedVehicle = this.gameState.vehicleId;
     this.selectedPalette = this.gameState.paletteId;
 
-    // Refresh active classes in DOM
+    this.refreshCardLocks();
+    this.syncShowcase();
+  }
+
+  public refreshCardLocks(): void {
+    // Update garage gem and coin balance display
+    const gemEl = document.getElementById('garage-gems');
+    if (gemEl) gemEl.innerText = `${this.gameState.totalGemsSaved}`;
+
+    const coinEl = document.getElementById('garage-coins');
+    if (coinEl) coinEl.innerText = `${this.gameState.totalCoinsSaved}`;
+
+    // Refresh character cards
     document.querySelectorAll('#roster-characters .roster-card').forEach((card) => {
+      const id = card.getAttribute('data-id') as CharacterId;
+      const isUnlocked = this.gameState.isCharacterUnlocked(id);
+      const def = CHARACTER_DEFS[id];
+
       if (card.getAttribute('data-id') === this.selectedCharacter) {
         card.classList.add('active');
       } else {
         card.classList.remove('active');
       }
+
+      if (!isUnlocked) {
+        card.classList.add('locked');
+        let lockTag = card.querySelector('.lock-tag') as HTMLElement;
+        if (!lockTag) {
+          lockTag = document.createElement('div');
+          lockTag.className = 'lock-tag';
+          card.appendChild(lockTag);
+        }
+        lockTag.innerHTML = `🔒 UNLOCK: 💎 ${def.gemPrice}`;
+      } else {
+        card.classList.remove('locked');
+        const lockTag = card.querySelector('.lock-tag');
+        if (lockTag) lockTag.remove();
+      }
     });
 
+    // Refresh vehicle cards
     document.querySelectorAll('#roster-vehicles .roster-card').forEach((card) => {
+      const id = card.getAttribute('data-id') as VehicleId;
+      const isUnlocked = this.gameState.isVehicleUnlocked(id);
+      const def = VEHICLE_DEFS[id];
+
       if (card.getAttribute('data-id') === this.selectedVehicle) {
         card.classList.add('active');
       } else {
         card.classList.remove('active');
+      }
+
+      if (!isUnlocked) {
+        card.classList.add('locked');
+        let lockTag = card.querySelector('.lock-tag') as HTMLElement;
+        if (!lockTag) {
+          lockTag = document.createElement('div');
+          lockTag.className = 'lock-tag';
+          card.appendChild(lockTag);
+        }
+        lockTag.innerHTML = `🔒 UNLOCK: 💎 ${def.gemPrice}`;
+      } else {
+        card.classList.remove('locked');
+        const lockTag = card.querySelector('.lock-tag');
+        if (lockTag) lockTag.remove();
       }
     });
 
@@ -128,8 +207,6 @@ export class GarageView {
         btn.classList.remove('active');
       }
     });
-
-    this.syncShowcase();
   }
 
   private syncShowcase(): void {

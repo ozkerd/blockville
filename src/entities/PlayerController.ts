@@ -53,8 +53,11 @@ export class PlayerController {
 
   // Super abilities & Power-ups
   public hasShield = false;
+  public vanArmorShield = false;
+  public boostCharges = 0;
   public magnetTimer = 0;
   public turboTimer = 0;
+  private scooterChargeTimer = 0;
 
   // Run cycle animation timer
   private runCycleTime = 0;
@@ -133,8 +136,11 @@ export class PlayerController {
     this.vehicleDuration = 0;
     this.transitionTimer = 0;
     this.hasShield = false;
+    this.vanArmorShield = false;
+    this.boostCharges = 0;
     this.magnetTimer = 0;
     this.turboTimer = 0;
+    this.scooterChargeTimer = 0;
     this.runCycleTime = 0;
     this.rebuildMeshes();
     this.audioManager.stopVehicleEngine();
@@ -188,6 +194,22 @@ export class PlayerController {
     }
   }
 
+  public addBoostCharge(): void {
+    this.boostCharges = Math.min(3, this.boostCharges + 1);
+    this.audioManager.playMountSound();
+    HapticManager.heavyImpact();
+  }
+
+  public useBoost(): boolean {
+    if (this.boostCharges > 0) {
+      this.boostCharges--;
+      this.activateTurbo();
+      HapticManager.heavyImpact();
+      return true;
+    }
+    return false;
+  }
+
   /**
    * Triggers cinematic mount transition into vehicle
    */
@@ -207,6 +229,7 @@ export class PlayerController {
     const vehDef = VEHICLE_DEFS[this.vehicleId];
     this.maxVehicleDuration = vehDef.baseDurationSeconds * charDef.vehicleDurationBonus;
     this.vehicleDuration = this.maxVehicleDuration;
+    this.vanArmorShield = vehDef.absorbsRoadblocks;
 
     // Cinematic hop
     this.verticalVelocity = 9.5;
@@ -237,6 +260,7 @@ export class PlayerController {
 
     this.mode = 'on_foot';
     this.vehicleDuration = 0;
+    this.vanArmorShield = false;
     this.turboTimer = 0;
     this.audioManager.stopVehicleEngine();
 
@@ -256,14 +280,25 @@ export class PlayerController {
   }
 
   public activateTurbo(): void {
-    this.turboTimer = 5.0;
+    this.turboTimer = 4.5;
+    this.particleSystem.emitSmashDebris(this.group.position, [0xFFEA00, 0x00E5FF, 0xFF4081]);
     this.audioManager.playMountSound();
   }
 
   public update(deltaTime: number, forwardSpeed: number): void {
-    // 1. Smooth horizontal lane lerp
-    this.currentX = THREE.MathUtils.lerp(this.currentX, this.targetX, deltaTime * 14);
+    // 1. Smooth horizontal lane lerp with character agility bonus
+    const agility = CHARACTER_DEFS[this.characterId]?.laneAgilityBonus || 1.0;
+    this.currentX = THREE.MathUtils.lerp(this.currentX, this.targetX, deltaTime * (14 * agility));
     const laneShiftProgress = (this.targetX - this.currentX) / LANE_WIDTH;
+
+    // Eco scooter passive charge
+    if (this.mode === 'in_vehicle' && this.vehicleId === 'scooter') {
+      this.scooterChargeTimer += deltaTime;
+      if (this.scooterChargeTimer >= 8.0) {
+        this.scooterChargeTimer = 0;
+        this.activateTurbo();
+      }
+    }
 
     // 2. Vertical jump/fall physics
     if (this.y > 0 || this.verticalVelocity !== 0) {
