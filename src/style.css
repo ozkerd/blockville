@@ -347,30 +347,31 @@ html, body {
   border-radius: 10px;
 }
 
-/* Vehicle Timer Bar - Positioned at top sky area so it never obscures the car */
+/* Vehicle Timer Bar - Positioned at top-right so it balances with the Level card on the left and never overlaps */
 .vehicle-meter-container {
   position: absolute;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 0;
+  right: 24px;
+  left: auto;
+  transform: none;
   z-index: 10;
   pointer-events: none;
   background: rgba(255, 255, 255, 0.96);
-  padding: 8px 20px;
-  border-radius: 20px;
+  padding: 8px 16px;
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  width: 290px;
-  max-width: 85%;
-  border: 3px solid #FF4081;
-  box-shadow: 0 6px 20px rgba(255, 64, 129, 0.3);
-  animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  width: 200px;
+  max-width: 45vw;
+  border: 2.5px solid #FF4081;
+  box-shadow: 0 4px 16px rgba(255, 64, 129, 0.25);
+  animation: vehicleBounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes bounceIn {
-  0% { transform: translate(-50%, -20px) scale(0.9); opacity: 0; }
-  100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+@keyframes vehicleBounceIn {
+  0% { transform: translateY(-15px) scale(0.92); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
 }
 
 .vehicle-meter-header {
@@ -1108,7 +1109,7 @@ html, body {
     font-size: 1.05rem;
   }
   .level-card {
-    width: 155px;
+    width: 135px;
     padding: 4px 8px;
     border-radius: 12px;
     gap: 3px;
@@ -1124,19 +1125,28 @@ html, body {
     font-size: 0.62rem;
   }
   .mission-card {
-    max-width: 170px;
-    padding: 6px 10px;
+    max-width: 135px;
+    padding: 4px 8px;
   }
   .vehicle-meter-container {
-    top: 48px;
-    width: 220px;
-    padding: 6px 12px;
+    top: 0;
+    right: 10px;
+    left: auto;
+    transform: none;
+    width: 135px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    gap: 3px;
   }
   .vehicle-meter-header {
-    font-size: 0.72rem;
+    font-size: 0.65rem;
+  }
+  #vehicle-meter-ability {
+    font-size: 0.56rem;
+    padding: 1px 4px;
   }
   .vehicle-timer-text {
-    font-size: 0.72rem;
+    font-size: 0.65rem;
   }
   .level-up-banner {
     top: 10px;

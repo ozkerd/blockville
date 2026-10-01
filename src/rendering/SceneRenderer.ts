@@ -11,7 +11,8 @@ export class SceneRenderer {
   constructor(canvas: HTMLCanvasElement) {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x70C5FF); // Sunny sky blue
-    this.scene.fog = new THREE.FogExp2(0x70C5FF, 0.012);
+    // Gentle linear-like fog starting far out at 75m to keep the track sharp, clear, and never blurry
+    this.scene.fog = new THREE.Fog(0x70C5FF, 75, 230);
 
     const aspect = window.innerWidth / window.innerHeight;
     this.camera = new THREE.PerspectiveCamera(60, aspect, 0.1, 300);
@@ -25,19 +26,19 @@ export class SceneRenderer {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.15;
+    this.renderer.toneMappingExposure = 1.25; // Slightly brighter exposure
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // Lighting setup for glossy toy aesthetic
-    this.hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0x81C784, 0.75); // White sun, grass bounce
+    // Lighting setup for bright, vibrant glossy toy aesthetic
+    this.hemiLight = new THREE.HemisphereLight(0xFFFFFF, 0xA5D6A7, 0.95); // Crisp sun & luminous ground bounce
     this.hemiLight.position.set(0, 50, 0);
     this.scene.add(this.hemiLight);
 
-    this.ambientLight = new THREE.AmbientLight(0xFFF9C4, 0.35); // Warm ambient
+    this.ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.55); // High ambient illumination (no dark shadows)
     this.scene.add(this.ambientLight);
 
-    this.dirLight = new THREE.DirectionalLight(0xFFFFFF, 1.4);
+    this.dirLight = new THREE.DirectionalLight(0xFFFFFF, 1.6);
     this.dirLight.position.set(20, 35, 15);
     this.dirLight.castShadow = true;
     this.dirLight.shadow.mapSize.width = 2048;

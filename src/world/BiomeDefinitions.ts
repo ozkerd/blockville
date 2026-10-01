@@ -676,12 +676,12 @@ export class BiomeDefinitions {
   // =========================================================================
   private static pierBiome: BiomeVisuals = {
     name: 'Amusement Pier',
-    roadColor: 0x7E57C2,      // Deep carnival violet
+    roadColor: 0x9575CD,      // Bright vibrant carnival lilac road (was dark 0x7E57C2)
     curbColor: 0x00E5FF,      // Electric cyan neon
-    sidewalkColor: 0xBA68C8,  // Neon magenta-purple
-    skyColor: 0x1A237E,       // Twilight carnival evening sky
-    fogColor: 0x283593,
-    groundColor: 0x0D47A1,    // Ocean shimmer
+    sidewalkColor: 0xCE93D8,  // Radiant candy-magenta sidewalk
+    skyColor: 0x5C6BC0,       // Bright festival twilight purple-blue sky (was 0x1A237E dark navy)
+    fogColor: 0x7986CB,       // Soft translucent horizon glow
+    groundColor: 0x1E88E5,    // Crisp luminous ocean bay blue (was dark 0x0D47A1)
 
     buildSceneryProp: (side, idx) => {
       const group = new THREE.Group();
@@ -787,12 +787,12 @@ export class BiomeDefinitions {
   // =========================================================================
   private static cyberBiome: BiomeVisuals = {
     name: 'Cyber Circuit',
-    roadColor: 0x1A237E,      // Deep electric indigo
+    roadColor: 0x3949AB,      // Bright electric indigo road with crystal clear contrast (was 0x1A237E)
     curbColor: 0x00E676,      // Neon cyber mint
-    sidewalkColor: 0x263238,  // Dark slate high-tech grid
-    skyColor: 0x0D47A1,       // Dark cyber neon sky
-    fogColor: 0x0D47A1,
-    groundColor: 0x004D40,    // Dark circuit ground
+    sidewalkColor: 0x546E7A,  // Crisp slate grid
+    skyColor: 0x1E88E5,       // Electric neon azure sky (was dark 0x0D47A1)
+    fogColor: 0x42A5F5,       // Luminous light fog
+    groundColor: 0x00897B,    // Radiant cyber teal ground (was dark 0x004D40)
 
     buildSceneryProp: (side, idx) => {
       const group = new THREE.Group();
