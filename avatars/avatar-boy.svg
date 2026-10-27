@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bgGradBoy" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E0F2FE" />
+      <stop offset="50%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+    <radialGradient id="sparkleGlowBoy" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8" />
+      <stop offset="60%" stop-color="#BAE6FD" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#0284C7" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="capGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0288D1" />
+      <stop offset="100%" stop-color="#01579B" />
+    </linearGradient>
+    <linearGradient id="hoodieGradBoy" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E88E5" />
+      <stop offset="100%" stop-color="#0D47A1" />
+    </linearGradient>
+    <linearGradient id="hairGradBoy" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6D4C41" />
+      <stop offset="100%" stop-color="#3E2723" />
+    </linearGradient>
+    <filter id="shadowFilterBoy" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0D47A1" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Background Card -->
+  <rect width="256" height="256" rx="48" fill="url(#bgGradBoy)" />
+  <circle cx="128" cy="110" r="95" fill="url(#sparkleGlowBoy)" />
+
+  <!-- Background Sparks & Stars -->
+  <path d="M42 54 Q48 54 48 48 Q48 54 54 54 Q48 54 48 60 Q48 54 42 54 Z" fill="#FFFFFF" opacity="0.9" />
+  <path d="M212 64 Q217 64 217 59 Q217 64 222 64 Q217 64 217 69 Q217 64 212 64 Z" fill="#FFFFFF" opacity="0.85" />
+  <path d="M38 174 Q43 174 43 169 Q43 174 48 174 Q43 174 43 179 Q43 174 38 174 Z" fill="#FFFFFF" opacity="0.75" />
+  <!-- Cool lightning bolt spark -->
+  <path d="M206 130 L198 142 L206 142 L200 156 L216 138 L208 138 Z" fill="#FFEA00" opacity="0.85" />
+
+  <!-- Character Group with Soft Shadow -->
+  <g filter="url(#shadowFilterBoy)">
+    <!-- Blue Hoodie Shoulders & Body -->
+    <path d="M72 256 L72 208 C72 188 92 178 128 178 C164 178 184 188 184 208 L184 256 Z" fill="url(#hoodieGradBoy)" />
+    <!-- White Sporty Zipper Track -->
+    <path d="M128 186 L128 256" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" />
+    <circle cx="128" cy="192" r="3.5" fill="#FFE082" />
+    <!-- Blue Collar Rib -->
+    <path d="M96 182 C108 200 148 200 160 182 C148 206 108 206 96 182 Z" fill="#01579B" />
+
+    <!-- Lightning Bolt Badge on Hoodie -->
+    <path d="M110 216 L105 224 L109 224 L105 233 L115 222 L111 222 Z" fill="#FFEB3B" stroke="#F57F17" stroke-width="0.8" />
+
+    <!-- Neck -->
+    <rect x="117" y="166" width="22" height="20" rx="6" fill="#FAD0B6" />
+
+    <!-- Head / Face -->
+    <ellipse cx="128" cy="130" rx="46" ry="43" fill="#FFE0CC" />
+
+    <!-- Sporty Cheeks -->
+    <ellipse cx="98" cy="142" rx="9" ry="5" fill="#FFAB91" opacity="0.55" />
+    <ellipse cx="158" cy="142" rx="9" ry="5" fill="#FFAB91" opacity="0.55" />
+
+    <!-- Big Anime Eyes -->
+    <!-- Left Eye -->
+    <ellipse cx="106" cy="128" rx="9.5" ry="12.5" fill="#1A237E" />
+    <ellipse cx="106" cy="131" rx="7.5" ry="9.5" fill="#0288D1" />
+    <circle cx="103" cy="124" r="4.5" fill="#FFFFFF" />
+    <circle cx="108" cy="134" r="2" fill="#FFFFFF" />
+    <path d="M97 117 Q106 112 115 116" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+
+    <!-- Right Eye -->
+    <ellipse cx="150" cy="128" rx="9.5" ry="12.5" fill="#1A237E" />
+    <ellipse cx="150" cy="131" rx="7.5" ry="9.5" fill="#0288D1" />
+    <circle cx="147" cy="124" r="4.5" fill="#FFFFFF" />
+    <circle cx="152" cy="134" r="2" fill="#FFFFFF" />
+    <path d="M141 116 Q150 112 159 117" stroke="#263238" stroke-width="3" stroke-linecap="round" fill="none" />
+
+    <!-- Cool Boy Grin -->
+    <path d="M121 146 Q128 155 137 145" stroke="#BF360C" stroke-width="2.8" stroke-linecap="round" fill="#FF8A80" />
+    <!-- Upper teeth flash -->
+    <path d="M123 147 Q128 151 135 146" fill="#FFFFFF" />
+
+    <!-- Cute Button Nose -->
+    <ellipse cx="128" cy="137" rx="2" ry="1.5" fill="#D78F70" />
+
+    <!-- Brown Hair Fringe under Cap -->
+    <path d="M84 116 C84 100 94 92 110 92 C116 98 124 94 132 94 C142 98 150 92 168 96 C172 104 172 116 172 120 C166 110 158 108 148 114 C136 108 126 110 118 114 C106 108 96 110 84 116 Z" fill="url(#hairGradBoy)" />
+    <!-- Sideburns -->
+    <path d="M84 116 C82 126 84 134 88 138 C88 132 88 124 86 116 Z" fill="url(#hairGradBoy)" />
+    <path d="M172 116 C174 126 172 134 168 138 C168 132 168 124 170 116 Z" fill="url(#hairGradBoy)" />
+
+    <!-- Cool Blue Baseball Cap -->
+    <!-- Cap Crown -->
+    <path d="M78 106 C78 68 100 56 128 56 C156 56 178 68 178 106 C178 104 156 94 128 94 C100 94 78 104 78 106 Z" fill="url(#capGrad)" />
+    <!-- White Stripe across Cap Crown -->
+    <path d="M84 94 C96 82 112 76 128 76 C144 76 160 82 172 94 C160 85 144 80 128 80 C112 80 96 85 84 94 Z" fill="#FFFFFF" opacity="0.85" />
+    <!-- Cap Button on Top -->
+    <ellipse cx="128" cy="56" rx="6" ry="3" fill="#FFE082" />
+    <!-- Cap Visor / Bill (Sporty Curved Brim) -->
+    <path d="M72 102 C90 92 166 92 184 102 C178 116 160 124 128 124 C96 124 78 116 72 102 Z" fill="#0277BD" stroke="#01579B" stroke-width="1.5" />
+    <!-- Under-brim shade -->
+    <path d="M78 104 C94 98 162 98 178 104 C164 114 148 118 128 118 C108 118 92 114 78 104 Z" fill="#00E5FF" opacity="0.3" />
+  </g>
+
+  <!-- Tag Pill: LEO (BOY) -->
+  <g transform="translate(128, 226)">
+    <rect x="-62" y="-14" width="124" height="26" rx="13" fill="#FFFFFF" stroke="#0288D1" stroke-width="2.5" />
+    <text x="0" y="4" font-family="'Nunito', 'Fredoka', sans-serif" font-weight="900" font-size="12" fill="#0277BD" text-anchor="middle" letter-spacing="0.5">⚡ LEO (OĞLAN)</text>
+  </g>
+</svg>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bgGradSkye" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3E8FF" />
+      <stop offset="50%" stop-color="#C084FC" />
+      <stop offset="100%" stop-color="#7E22CE" />
+    </linearGradient>
+    <radialGradient id="sparkleGlowSkye" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8" />
+      <stop offset="60%" stop-color="#E9D5FF" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#7E22CE" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="hoodieGradSkye" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FF9800" />
+      <stop offset="100%" stop-color="#E65100" />
+    </linearGradient>
+    <filter id="shadowFilterSkye" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#581C87" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <rect width="256" height="256" rx="48" fill="url(#bgGradSkye)" />
+  <circle cx="128" cy="110" r="95" fill="url(#sparkleGlowSkye)" />
+
+  <path d="M42 54 Q48 54 48 48 Q48 54 54 54 Q48 54 48 60 Q48 54 42 54 Z" fill="#FFFFFF" opacity="0.9" />
+  <path d="M212 64 Q217 64 217 59 Q217 64 222 64 Q217 64 217 69 Q217 64 212 64 Z" fill="#FFFFFF" opacity="0.85" />
+
+  <g filter="url(#shadowFilterSkye)">
+    <path d="M72 256 L72 208 C72 188 92 178 128 178 C164 178 184 188 184 208 L184 256 Z" fill="url(#hoodieGradSkye)" />
+    <path d="M96 182 C108 200 148 200 160 182 C148 206 108 206 96 182 Z" fill="#BF360C" />
+    <rect x="117" y="166" width="22" height="20" rx="6" fill="#FAD0B6" />
+    <ellipse cx="128" cy="130" rx="46" ry="43" fill="#FFE0CC" />
+
+    <!-- Explorer Goggles on Forehead -->
+    <rect x="90" y="86" width="76" height="18" rx="9" fill="#37474F" />
+    <circle cx="108" cy="95" r="10" fill="#00E5FF" stroke="#ECEFF1" stroke-width="2" />
+    <circle cx="148" cy="95" r="10" fill="#00E5FF" stroke="#ECEFF1" stroke-width="2" />
+
+    <!-- Big Eyes -->
+    <ellipse cx="106" cy="130" rx="9.5" ry="12" fill="#2E1C38" />
+    <ellipse cx="106" cy="133" rx="7.5" ry="9" fill="#00B0FF" />
+    <circle cx="103" cy="126" r="4" fill="#FFFFFF" />
+    <ellipse cx="150" cy="130" rx="9.5" ry="12" fill="#2E1C38" />
+    <ellipse cx="150" cy="133" rx="7.5" ry="9" fill="#00B0FF" />
+    <circle cx="147" cy="126" r="4" fill="#FFFFFF" />
+
+    <!-- Smile -->
+    <path d="M121 146 Q128 154 136 146" stroke="#C2185B" stroke-width="2.6" stroke-linecap="round" fill="#F48FB1" />
+  </g>
+
+  <g transform="translate(128, 226)">
+    <rect x="-62" y="-14" width="124" height="26" rx="13" fill="#FFFFFF" stroke="#9333EA" stroke-width="2.5" />
+    <text x="0" y="4" font-family="'Nunito', 'Fredoka', sans-serif" font-weight="900" font-size="12" fill="#7E22CE" text-anchor="middle" letter-spacing="0.5">🥽 SKYE (KEŞİF)</text>
+  </g>
+</svg>

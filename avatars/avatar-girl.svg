@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bgGradGirl" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE4E6" />
+      <stop offset="50%" stop-color="#FF8DA1" />
+      <stop offset="100%" stop-color="#F43F5E" />
+    </linearGradient>
+    <radialGradient id="sparkleGlow" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8" />
+      <stop offset="60%" stop-color="#FFB6C1" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#F43F5E" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="hairGradGirl" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#5D4037" />
+      <stop offset="100%" stop-color="#3E2723" />
+    </linearGradient>
+    <linearGradient id="hoodieGradGirl" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FF69B4" />
+      <stop offset="100%" stop-color="#E91E63" />
+    </linearGradient>
+    <linearGradient id="bowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF4081" />
+      <stop offset="100%" stop-color="#D81B60" />
+    </linearGradient>
+    <filter id="shadowFilter" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#880E4F" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Background Card -->
+  <rect width="256" height="256" rx="48" fill="url(#bgGradGirl)" />
+  <circle cx="128" cy="110" r="95" fill="url(#sparkleGlow)" />
+
+  <!-- Background Sparkles & Hearts -->
+  <path d="M42 56 Q48 56 48 50 Q48 56 54 56 Q48 56 48 62 Q48 56 42 56 Z" fill="#FFFFFF" opacity="0.9" />
+  <path d="M210 68 Q215 68 215 63 Q215 68 220 68 Q215 68 215 73 Q215 68 210 68 Z" fill="#FFFFFF" opacity="0.85" />
+  <path d="M38 170 Q43 170 43 165 Q43 170 48 170 Q43 170 43 175 Q43 170 38 170 Z" fill="#FFFFFF" opacity="0.7" />
+  <!-- Cute small floating heart -->
+  <path d="M214 135 C214 130 208 126 203 130 C198 126 192 130 192 135 C192 143 203 151 203 151 C203 151 214 143 214 135 Z" fill="#FF80AB" opacity="0.8" />
+
+  <!-- Character Group with Soft Shadow -->
+  <g filter="url(#shadowFilter)">
+    <!-- High Ponytail (Behind Head) -->
+    <path d="M168 86 C186 64 212 70 216 100 C218 124 198 148 174 140 C162 136 158 116 168 86 Z" fill="url(#hairGradGirl)" />
+    <!-- High Ponytail Hair Flow -->
+    <path d="M185 85 C205 92 210 115 204 132 C196 148 178 152 170 142" stroke="#4E342E" stroke-width="3" fill="none" stroke-linecap="round" />
+
+    <!-- Big Hot Pink Ribbon Bow -->
+    <!-- Left Loop -->
+    <ellipse cx="152" cy="74" rx="14" ry="9" transform="rotate(-30 152 74)" fill="url(#bowGrad)" />
+    <!-- Right Loop -->
+    <ellipse cx="178" cy="80" rx="14" ry="9" transform="rotate(35 178 80)" fill="url(#bowGrad)" />
+    <!-- Center Knot -->
+    <circle cx="165" cy="77" r="7" fill="#F8BBD0" />
+    <circle cx="165" cy="77" r="5" fill="#C2185B" />
+    <!-- Ribbon Tails -->
+    <path d="M163 82 Q166 102 158 114" stroke="#D81B60" stroke-width="4" stroke-linecap="round" fill="none" />
+    <path d="M168 82 Q176 98 174 112" stroke="#D81B60" stroke-width="4" stroke-linecap="round" fill="none" />
+
+    <!-- Pink Hoodie Shoulders & Body -->
+    <path d="M72 256 L72 208 C72 188 92 178 128 178 C164 178 184 188 184 208 L184 256 Z" fill="url(#hoodieGradGirl)" />
+    <!-- Hoodie Neck Collar -->
+    <path d="M96 182 C108 200 148 200 160 182 C148 208 108 208 96 182 Z" fill="#C2185B" />
+    <!-- White Hoodie Drawstrings -->
+    <path d="M116 194 L114 224" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" />
+    <circle cx="114" cy="226" r="3" fill="#FFE082" />
+    <path d="M140 194 L142 224" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" />
+    <circle cx="142" cy="226" r="3" fill="#FFE082" />
+    <!-- Heart Badge on Hoodie -->
+    <path d="M128 214 C128 210 123 207 119 210 C115 207 110 210 110 214 C110 220 119 226 119 226 C119 226 128 220 128 214 Z" fill="#FFFFFF" />
+
+    <!-- Neck -->
+    <rect x="117" y="166" width="22" height="20" rx="6" fill="#FAD0B6" />
+
+    <!-- Head / Face -->
+    <ellipse cx="128" cy="130" rx="46" ry="43" fill="#FFE0CC" />
+
+    <!-- Rosy Cheeks -->
+    <ellipse cx="98" cy="142" rx="10" ry="6" fill="#FF8DA1" opacity="0.65" />
+    <ellipse cx="158" cy="142" rx="10" ry="6" fill="#FF8DA1" opacity="0.65" />
+
+    <!-- Big Anime Eyes -->
+    <!-- Left Eye -->
+    <ellipse cx="106" cy="128" rx="10" ry="13" fill="#2E1C38" />
+    <ellipse cx="106" cy="131" rx="8" ry="10" fill="#9C27B0" />
+    <circle cx="103" cy="124" r="4.5" fill="#FFFFFF" />
+    <circle cx="108" cy="134" r="2" fill="#FFFFFF" />
+    <!-- Left Eyelashes -->
+    <path d="M96 119 Q106 114 116 118" stroke="#3E2723" stroke-width="3" stroke-linecap="round" fill="none" />
+    <path d="M115 117 L120 114" stroke="#3E2723" stroke-width="2.5" stroke-linecap="round" />
+
+    <!-- Right Eye -->
+    <ellipse cx="150" cy="128" rx="10" ry="13" fill="#2E1C38" />
+    <ellipse cx="150" cy="131" rx="8" ry="10" fill="#9C27B0" />
+    <circle cx="147" cy="124" r="4.5" fill="#FFFFFF" />
+    <circle cx="152" cy="134" r="2" fill="#FFFFFF" />
+    <!-- Right Eyelashes -->
+    <path d="M140 118 Q150 114 160 119" stroke="#3E2723" stroke-width="3" stroke-linecap="round" fill="none" />
+    <path d="M159 117 L164 114" stroke="#3E2723" stroke-width="2.5" stroke-linecap="round" />
+
+    <!-- Cute Button Nose -->
+    <ellipse cx="128" cy="137" rx="2" ry="1.5" fill="#E09F80" />
+
+    <!-- Sweet Smiling Mouth -->
+    <path d="M121 146 Q128 154 135 146" stroke="#D81B60" stroke-width="2.8" stroke-linecap="round" fill="#F48FB1" />
+
+    <!-- Hair Bangs (Front Frame) -->
+    <path d="M82 126 C82 92 100 80 128 80 C156 80 174 92 174 126 C174 100 160 88 142 88 C128 88 122 96 116 96 C110 96 102 88 88 92 C83 98 82 112 82 126 Z" fill="url(#hairGradGirl)" />
+    <!-- Left Side Lock -->
+    <path d="M82 118 C80 134 84 150 88 156 C90 152 92 136 90 122 Z" fill="url(#hairGradGirl)" />
+    <!-- Right Side Lock -->
+    <path d="M174 118 C176 134 172 150 168 156 C166 152 164 136 166 122 Z" fill="url(#hairGradGirl)" />
+    <!-- Hair Shimmer Highlights -->
+    <path d="M102 86 C114 84 124 84 132 86" stroke="#8D6E63" stroke-width="3" stroke-linecap="round" fill="none" />
+  </g>
+
+  <!-- Tag Pill: NOVA (GIRL) -->
+  <g transform="translate(128, 226)">
+    <rect x="-62" y="-14" width="124" height="26" rx="13" fill="#FFFFFF" stroke="#FF4081" stroke-width="2.5" />
+    <text x="0" y="4" font-family="'Nunito', 'Fredoka', sans-serif" font-weight="900" font-size="12" fill="#D81B60" text-anchor="middle" letter-spacing="0.5">💖 NOVA (KIZ)</text>
+  </g>
+</svg>
