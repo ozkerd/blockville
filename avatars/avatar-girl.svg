@@ -113,10 +113,4 @@
     <!-- Hair Shimmer Highlights -->
     <path d="M102 86 C114 84 124 84 132 86" stroke="#8D6E63" stroke-width="3" stroke-linecap="round" fill="none" />
   </g>
-
-  <!-- Tag Pill: NOVA (GIRL) -->
-  <g transform="translate(128, 226)">
-    <rect x="-62" y="-14" width="124" height="26" rx="13" fill="#FFFFFF" stroke="#FF4081" stroke-width="2.5" />
-    <text x="0" y="4" font-family="'Nunito', 'Fredoka', sans-serif" font-weight="900" font-size="12" fill="#D81B60" text-anchor="middle" letter-spacing="0.5">💖 NOVA (KIZ)</text>
-  </g>
 </svg>

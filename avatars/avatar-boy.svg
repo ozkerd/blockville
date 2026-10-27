@@ -102,10 +102,4 @@
     <!-- Under-brim shade -->
     <path d="M78 104 C94 98 162 98 178 104 C164 114 148 118 128 118 C108 118 92 114 78 104 Z" fill="#00E5FF" opacity="0.3" />
   </g>
-
-  <!-- Tag Pill: LEO (BOY) -->
-  <g transform="translate(128, 226)">
-    <rect x="-62" y="-14" width="124" height="26" rx="13" fill="#FFFFFF" stroke="#0288D1" stroke-width="2.5" />
-    <text x="0" y="4" font-family="'Nunito', 'Fredoka', sans-serif" font-weight="900" font-size="12" fill="#0277BD" text-anchor="middle" letter-spacing="0.5">⚡ LEO (OĞLAN)</text>
-  </g>
 </svg>

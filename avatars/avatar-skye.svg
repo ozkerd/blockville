@@ -47,9 +47,4 @@
     <!-- Smile -->
     <path d="M121 146 Q128 154 136 146" stroke="#C2185B" stroke-width="2.6" stroke-linecap="round" fill="#F48FB1" />
   </g>
-
-  <g transform="translate(128, 226)">
-    <rect x="-62" y="-14" width="124" height="26" rx="13" fill="#FFFFFF" stroke="#9333EA" stroke-width="2.5" />
-    <text x="0" y="4" font-family="'Nunito', 'Fredoka', sans-serif" font-weight="900" font-size="12" fill="#7E22CE" text-anchor="middle" letter-spacing="0.5">🥽 SKYE (KEŞİF)</text>
-  </g>
 </svg>
