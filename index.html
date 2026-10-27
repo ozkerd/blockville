@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Blockville Rush & Ride — Modular 3D Toy-Box Runner & Racer</title>
+    <script>
+      window.onerror = function(msg, url, line, col) {
+        var d = document.getElementById('debug-err') || document.createElement('div');
+        d.id = 'debug-err';
+        d.style.cssText = 'position:fixed;top:0;left:0;width:100%;z-index:999999;background:#e91e63;color:#fff;padding:16px;font-family:sans-serif;font-size:13px;word-break:break-all;';
+        d.textContent = 'ERROR: ' + msg + ' (' + (url ? url.split('/').pop() : '') + ':' + line + ':' + col + ')';
+        document.body ? document.body.appendChild(d) : document.documentElement.appendChild(d);
+      };
+      window.onunhandledrejection = function(e) {
+        var d = document.getElementById('debug-rejection') || document.createElement('div');
+        d.id = 'debug-rejection';
+        d.style.cssText = 'position:fixed;bottom:0;left:0;width:100%;z-index:999999;background:#ff9800;color:#000;padding:16px;font-family:sans-serif;font-size:13px;word-break:break-all;';
+        d.textContent = 'PROMISE REJECTION: ' + (e.reason ? (e.reason.message || e.reason) : e);
+        document.body ? document.body.appendChild(d) : document.documentElement.appendChild(d);
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <script type="module" src="./assets/index-CvuU62dt.js"></script>
+    <link rel="stylesheet" href="./assets/index-DEJ4jR8B.css">
+  </head>
+  <body>
+    <div id="app">
+      <!-- 3D Canvas Viewport -->
+      <canvas id="game-canvas"></canvas>
+
+      <!-- UI Overlay Layer -->
+      <div id="ui-container">
+        <!-- Top Bar: Sound, Pause, Mode Info -->
+        <!-- Top Bar: Sound, Pause, Mode Info & In-Game Counters -->
+        <header id="top-bar">
+          <div class="top-left-actions">
+            <button id="btn-sound" class="toy-btn icon-btn" title="Toggle Sound">🔊</button>
+            <button id="btn-pause" class="toy-btn icon-btn hidden" title="Pause Game">⏸️</button>
+            <div id="distance-counter-wrap" class="distance-counter-wrap hidden">
+              <span id="distance-value">0 <small>m</small></span>
+              <div id="level-micro-pill" class="level-micro-pill">
+                <span id="hud-level-badge" class="micro-badge">LVL 1</span>
+                <span id="hud-level-name" class="micro-name">Boardwalk</span>
+                <div class="micro-bar-bg">
+                  <div id="level-progress-bar" class="micro-bar-fill" style="width: 0%;"></div>
+                </div>
+                <span id="level-fraction" class="hidden">0 / 250m</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="top-center-area">
+            <div id="biome-banner" class="biome-tag">Sunburst Boardwalk</div>
+            <div id="multiplier-badge" class="multiplier-pill hidden">x1</div>
+            <div id="speed-meter" class="speed-meter hidden">18 m/s</div>
+          </div>
+
+          <div class="top-right-stats">
+            <button id="btn-top-no-ads" class="toy-btn no-ads-pill-btn" title="Remove Ads / VIP">👑 NO ADS</button>
+            <div class="currency-group">
+              <div class="stat-pill star-pill">
+                <span class="icon">⭐</span>
+                <span id="star-count">0</span>
+              </div>
+              <div class="stat-pill gem-pill">
+                <span class="icon">💎</span>
+                <span id="gem-count">0</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- In-Game HUD (Missions, Vehicle Duration, Boost) -->
+        <div id="hud-screen" class="hud-screen hidden">
+          <!-- Top Left: Mission card for Stage mode only -->
+          <div class="hud-top-left">
+            <div id="mission-card" class="mission-card hidden">
+              <div class="mission-header">
+                <span class="badge">MISSION</span>
+                <span id="mission-title">Collect 50 Star Coins</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div id="mission-progress-bar" class="progress-bar-fill" style="width: 0%;"></div>
+              </div>
+              <span id="mission-fraction">0 / 50</span>
+            </div>
+          </div>
+
+          <!-- Level Up Celebratory Announcement Banner -->
+          <div id="level-up-banner" class="level-up-banner hidden">
+            <div class="level-up-title">🎉 LEVEL 2 REACHED! 🎉</div>
+            <div class="level-up-sub" id="level-up-sub">Entering Downtown Plaza (+50⭐ Bonus)</div>
+          </div>
+
+          <!-- Power-up / Vehicle Duration Bar (Bottom Center) -->
+          <div id="vehicle-meter-container" class="vehicle-meter-container hidden">
+            <div class="vehicle-meter-header">
+              <span id="vehicle-meter-name">SWEET-TREAT VAN</span>
+              <span id="vehicle-meter-ability">SHIELD BUMPER</span>
+            </div>
+            <div class="meter-bar-track">
+              <div id="vehicle-meter-fill" class="meter-bar-fill" style="width: 100%;"></div>
+            </div>
+            <div class="vehicle-timer-text" id="vehicle-timer-text">20.0s</div>
+          </div>
+
+          <!-- Active Powerup Badges (Magnet, Shield, Boost) -->
+          <div id="active-powerups" class="active-powerups"></div>
+
+          <!-- Floating Action Boost Button (Bottom Right) -->
+          <button id="btn-hud-boost" class="hud-boost-btn hidden" title="Nitro Boost (Press Space / Hold Screen / Tap)">
+            <span class="boost-icon">🚀</span>
+            <span class="boost-label">BOOST</span>
+            <span id="hud-boost-badge" class="boost-badge">x1</span>
+          </button>
+
+          <!-- Action Hint overlay -->
+          <div id="action-prompt" class="action-prompt hidden">VEHICLE READY!</div>
+
+          <!-- Mobile Touch Swipe Pad (Invisible but interactive) -->
+          <div id="touch-controls" class="touch-controls">
+            <div class="touch-hint">Swipe ⬅️ ➡️ steer | ⬆️ Jump | ⬇️ Slide | 🚀 Hold to Boost</div>
+          </div>
+        </div>
+
+        <!-- Main Menu / Hub Screen -->
+        <div id="main-menu" class="modal-screen">
+          <div class="menu-content glass-toy-card">
+            <div class="logo-container">
+              <div class="logo-sub">MODULAR 3D TOY-BOX RUNNER & RACER</div>
+              <h1 class="game-logo">BLOCKVILLE<br><span class="logo-accent">RUSH & RIDE</span></h1>
+              <div class="toy-stud-row">
+                <span class="toy-stud"></span>
+                <span class="toy-stud"></span>
+                <span class="toy-stud"></span>
+                <span class="toy-stud"></span>
+                <span class="toy-stud"></span>
+              </div>
+            </div>
+
+            <!-- Direct Quick Character Selector -->
+            <div class="quick-selector-section">
+              <div class="selector-title">CHOOSE YOUR AVATAR</div>
+              <div class="quick-chips-row" id="quick-avatar-chips">
+                <button class="quick-chip active" data-char="nova" title="Nova (The Maker)">
+                  <span class="chip-emoji">💜</span>
+                  <span class="chip-name">Nova</span>
+                  <span class="chip-perk">+15% Speed</span>
+                </button>
+                <button class="quick-chip" data-char="leo" title="Leo (The Baker)">
+                  <span class="chip-emoji">🥐</span>
+                  <span class="chip-name">Leo</span>
+                  <span class="chip-perk">+35% Fuel & 2x Smash</span>
+                </button>
+                <button class="quick-chip" data-char="skye" title="Skye (The Explorer)">
+                  <span class="chip-emoji">🥽</span>
+                  <span class="chip-name">Skye</span>
+                  <span class="chip-perk">🧲 Permanent Magnet</span>
+                </button>
+              </div>
+
+              <div class="selector-title" style="margin-top: 6px;">CHOOSE YOUR RIDE</div>
+              <div class="quick-chips-row" id="quick-vehicle-chips">
+                <button class="quick-chip active" data-veh="van" title="Sweet-Treat Van">
+                  <span class="chip-emoji">🍦</span>
+                  <span class="chip-name">Van</span>
+                  <span class="chip-perk">Crash Armor</span>
+                </button>
+                <button class="quick-chip" data-veh="buggy" title="Neon Buggy">
+                  <span class="chip-emoji">🏎️</span>
+                  <span class="chip-name">Buggy</span>
+                  <span class="chip-perk">Magnet & 2x ⭐</span>
+                </button>
+                <button class="quick-chip" data-veh="scooter" title="Eco Scooter">
+                  <span class="chip-emoji">🛵</span>
+                  <span class="chip-name">Scooter</span>
+                  <span class="chip-perk">+25% Top Speed</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="menu-actions">
+              <button id="btn-play-endless" class="toy-btn primary-btn pulse-glow">
+                <span class="btn-text">PLAY RUN & RACE</span>
+                <span class="btn-sub">Level up through dynamic worlds!</span>
+              </button>
+              <button id="btn-play-stages" class="toy-btn secondary-btn">
+                <span class="btn-text">STAGE MISSIONS</span>
+                <span class="btn-sub">Complete goals & unlock rewards</span>
+              </button>
+              <button id="btn-open-garage" class="toy-btn garage-btn">
+                <span class="icon">🎨</span>
+                <span class="btn-text">CUSTOM PALETTES</span>
+              </button>
+              <button id="btn-how-to-play" class="toy-btn info-btn">
+                <span class="icon">🎮</span>
+                <span class="btn-text">HOW TO PLAY</span>
+              </button>
+              <button id="btn-menu-no-ads" class="toy-btn vip-banner-btn">
+                <span class="btn-text">👑 REMOVE ADS / VIP</span>
+                <span class="btn-sub">Instant Revives & Zero Forced Ads ($3.99)</span>
+              </button>
+            </div>
+
+            <!-- Best Score preview -->
+            <div class="high-score-strip">
+              🏆 Best Distance: <strong id="menu-best-distance">0m</strong> &nbsp;|&nbsp; High Score: <strong id="menu-best-score">0</strong>
+            </div>
+            <div style="text-align: center; margin-top: 8px; font-size: 0.72rem;">
+              <a href="privacy.html" target="_blank" style="color: rgba(255, 255, 255, 0.65); text-decoration: underline; font-weight: 500;">🔒 Privacy Policy</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Garage Screen -->
+        <div id="garage-screen" class="modal-screen hidden">
+          <div class="garage-panel glass-toy-card">
+            <div class="modal-header">
+              <h2>🛠️ TOY BOX GARAGE</h2>
+              <div class="garage-balance-row">
+                <span class="currency-pill gem-pill">💎 <strong id="garage-gems">0</strong></span>
+                <span class="currency-pill coin-pill">⭐ <strong id="garage-coins">0</strong></span>
+              </div>
+              <button id="btn-close-garage" class="toy-btn close-btn">✕</button>
+            </div>
+
+            <div class="garage-tabs">
+              <button id="tab-characters" class="tab-btn active">AVATARS</button>
+              <button id="tab-vehicles" class="tab-btn">VEHICLES</button>
+            </div>
+
+            <!-- Character Roster View -->
+            <div id="roster-characters" class="roster-view">
+              <div class="roster-grid">
+                <!-- Nova Card -->
+                <div class="roster-card active" data-id="nova">
+                  <div class="card-icon">💜</div>
+                  <div class="card-title">Nova</div>
+                  <div class="card-role">The Maker</div>
+                  <div class="card-desc">Lilac hoodie, turquoise kicks, swift lane agile dash.</div>
+                  <div class="card-perk">⚡ +15% Speed & Ultra Agility</div>
+                </div>
+                <!-- Leo Card -->
+                <div class="roster-card" data-id="leo">
+                  <div class="card-icon">🥐</div>
+                  <div class="card-title">Leo</div>
+                  <div class="card-role">The Baker</div>
+                  <div class="card-desc">Baker apron, striped shirt, expert toy mechanic.</div>
+                  <div class="card-perk">🧁 +35% Fuel & 2x Smash Multiplier</div>
+                </div>
+                <!-- Skye Card -->
+                <div class="roster-card" data-id="skye">
+                  <div class="card-icon">🥽</div>
+                  <div class="card-title">Skye</div>
+                  <div class="card-role">The Explorer</div>
+                  <div class="card-desc">Sunset jacket, utility belt & aviator goggles.</div>
+                  <div class="card-perk">🧲 Permanent Coin Magnet Aura</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Vehicle Roster View -->
+            <div id="roster-vehicles" class="roster-view hidden">
+              <div class="roster-grid">
+                <!-- Sweet-Treat Van Card -->
+                <div class="roster-card active" data-id="van">
+                  <div class="card-icon">🍦</div>
+                  <div class="card-title">Sweet-Treat Van</div>
+                  <div class="card-role">Heavy Duty Delivery</div>
+                  <div class="card-desc">Spinning rooftop cupcake & block-burst bumper shield.</div>
+                  <div class="card-perk">💥 Bumper Smash & Crash Armor Shield</div>
+                </div>
+                <!-- Neon Buggy Card -->
+                <div class="roster-card" data-id="buggy">
+                  <div class="card-icon">🏎️</div>
+                  <div class="card-title">Neon Buggy</div>
+                  <div class="card-role">All-Terrain Cruiser</div>
+                  <div class="card-desc">Teal & yellow open-cockpit dune buggy with roll cage.</div>
+                  <div class="card-perk">🧲 3-Lane Coin Magnet & 2x Coins!</div>
+                </div>
+                <!-- Eco Scooter Card -->
+                <div class="roster-card" data-id="scooter">
+                  <div class="card-icon">🛵</div>
+                  <div class="card-title">Eco Scooter</div>
+                  <div class="card-role">Retro Turbo Moped</div>
+                  <div class="card-desc">Mint-green electric moped with extreme leaning agility.</div>
+                  <div class="card-perk">🚀 +25% Speed & Auto-Turbo Thruster</div>
+                </div>
+              </div>
+
+              <!-- Color Palette Swatches -->
+              <div class="palette-selector">
+                <span class="palette-label">COLORWAY:</span>
+                <div class="color-swatches">
+                  <button class="swatch-btn active" data-palette="classic" style="background: linear-gradient(135deg, #FF69B4, #4DD0E1);" title="Classic Pastels"></button>
+                  <button class="swatch-btn" data-palette="sunset" style="background: linear-gradient(135deg, #FF7043, #FFD54F);" title="Sunset Orange"></button>
+                  <button class="swatch-btn" data-palette="cyber" style="background: linear-gradient(135deg, #00E676, #7C4DFF);" title="Cyber Mint"></button>
+                  <button class="swatch-btn" data-palette="candy" style="background: linear-gradient(135deg, #F06292, #FFF176);" title="Cotton Candy"></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="garage-footer">
+              <button id="btn-select-confirm" class="toy-btn primary-btn">CONFIRM LOADOUT</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage Select Screen -->
+        <div id="stage-screen" class="modal-screen hidden">
+          <div class="stage-panel glass-toy-card">
+            <div class="modal-header">
+              <h2>🎯 STAGE MISSIONS</h2>
+              <button id="btn-close-stages" class="toy-btn close-btn">✕</button>
+            </div>
+            <div class="stage-list">
+              <div class="stage-item active" data-stage="1">
+                <div class="stage-badge">Stage 1</div>
+                <div class="stage-details">
+                  <div class="stage-name">Sunburst Stroll</div>
+                  <div class="stage-goal">Collect 35 Star Coins & Run 1,200m</div>
+                </div>
+                <button class="toy-btn primary-btn btn-start-stage">PLAY</button>
+              </div>
+              <div class="stage-item" data-stage="2">
+                <div class="stage-badge">Stage 2</div>
+                <div class="stage-details">
+                  <div class="stage-name">Sweet Smash Delivery</div>
+                  <div class="stage-goal">Mount the Sweet-Treat Van & Smash 5 Crates</div>
+                </div>
+                <button class="toy-btn primary-btn btn-start-stage">PLAY</button>
+              </div>
+              <div class="stage-item" data-stage="3">
+                <div class="stage-badge">Stage 3</div>
+                <div class="stage-details">
+                  <div class="stage-name">Pier Turbo Cruise</div>
+                  <div class="stage-goal">Survive 4,000m with 10 Smashes & 130 Coins</div>
+                </div>
+                <button class="toy-btn primary-btn btn-start-stage">PLAY</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instructions / How to Play Modal -->
+        <div id="instructions-screen" class="modal-screen hidden">
+          <div class="info-panel glass-toy-card">
+            <div class="modal-header">
+              <h2>🎮 HOW TO PLAY & PERKS</h2>
+              <button id="btn-close-instructions" class="toy-btn close-btn">✕</button>
+            </div>
+            <div class="instructions-content">
+              <div class="instruction-row">
+                <span class="key-badge">A / D</span> or <span class="key-badge">⬅️ ➡️</span> / <strong>Swipe Left-Right</strong>: Steer across lanes
+              </div>
+              <div class="instruction-row">
+                <span class="key-badge">W / ⬆️</span> / <strong>Swipe Up</strong>: Jump over hurdles & barriers
+              </div>
+              <div class="instruction-row">
+                <span class="key-badge">S / ⬇️</span> / <strong>Swipe Down</strong>: Slide under arches & <strong>DRIFT through rain puddles & ice!</strong>
+              </div>
+              <div class="instruction-row">
+                <span class="key-badge">SPACE / Hold Screen</span>: <strong>🚀 NITRO BOOST!</strong> Overdrive burst that smashes obstacles!
+              </div>
+              <div class="instruction-row">
+                <span class="key-badge">🔑 Vehicle Key</span>: Collect to mount your chosen ride! Van gives <strong>Crash Armor</strong>, Buggy gives <strong>3-Lane Magnet & 2x Coins</strong>, Scooter gives <strong>Turbo Speed</strong>!
+              </div>
+              <div class="instruction-row">
+                <span class="key-badge">🔧 Wrench</span>: Adds +10 seconds of vehicle fuel time!
+              </div>
+              <div class="instruction-row">
+                <span class="key-badge">💎 Diamond Gems</span>: Spend in the <strong>Toy Box Garage</strong> to permanently unlock new avatars & rides!
+              </div>
+            </div>
+            <button id="btn-instructions-gotit" class="toy-btn primary-btn">LET'S ROLL!</button>
+          </div>
+        </div>
+
+        <!-- Game Over & Victory Modal -->
+        <div id="game-over-screen" class="modal-screen hidden">
+          <div class="game-over-panel glass-toy-card">
+            <div id="game-over-badge" class="result-badge">CRASHED!</div>
+            <h2 id="game-over-title">RUN FINISHED</h2>
+
+            <div class="stats-summary">
+              <div class="summary-box">
+                <span class="box-label">DISTANCE</span>
+                <span id="final-distance" class="box-val">0m</span>
+              </div>
+              <div class="summary-box">
+                <span class="box-label">STAR COINS</span>
+                <span id="final-coins" class="box-val">0</span>
+              </div>
+              <div class="summary-box">
+                <span class="box-label">SMASH SCORE</span>
+                <span id="final-smash" class="box-val">0</span>
+              </div>
+              <div class="summary-box highlight-box">
+                <span class="box-label">TOTAL SCORE</span>
+                <span id="final-total-score" class="box-val">0</span>
+              </div>
+            </div>
+
+            <div id="new-high-score-banner" class="high-score-tag hidden">🎉 NEW RECORD! 🎉</div>
+
+            <div class="modal-actions">
+              <button id="btn-retry" class="toy-btn primary-btn pulse-glow">PLAY AGAIN</button>
+              <button id="btn-back-hub" class="toy-btn secondary-btn">MAIN MENU</button>
+              <button id="btn-go-garage" class="toy-btn garage-btn">GARAGE</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full-Screen Save Me Modal (Industry Benchmark Standard) -->
+        <div id="save-me-modal" class="modal-screen hidden">
+          <div class="save-me-panel glass-toy-card">
+            <div class="save-me-badge">💥 CRASHED!</div>
+            <h1 class="save-me-title">SAVE YOUR RUN?</h1>
+            <p class="save-me-sub">Continue with your score & get +3.5s shield!</p>
+
+            <button id="btn-save-me-action" class="toy-btn save-me-btn pulse-glow">
+              <span id="save-me-btn-icon" class="save-me-icon">📺</span>
+              <div class="save-me-text-group">
+                <span id="save-me-btn-title" class="save-me-btn-title">WATCH AD TO REVIVE</span>
+                <span id="save-me-btn-sub" class="save-me-btn-sub">+1 LIFE & INVINCIBILITY SHIELD</span>
+              </div>
+            </button>
+
+            <div class="save-me-footer">
+              <button id="btn-save-me-forfeit" class="forfeit-link">No thanks, End Run</button>
+              <button id="btn-save-me-no-ads" class="save-me-no-ads-btn">👑 Remove Ads ($3.99)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIP / Remove Ads Store Modal (Apple App Store In-App Purchase) -->
+        <div id="vip-store-modal" class="modal-screen hidden">
+          <div class="vip-store-panel glass-toy-card">
+            <div class="vip-header">
+              <div class="vip-crown">👑</div>
+              <h2>BLOCKVILLE VIP PASS</h2>
+              <span class="vip-price-tag">$3.99 / One-Time Purchase</span>
+            </div>
+            <div class="vip-perks-list">
+              <div class="vip-perk-item">
+                <span class="perk-check">🚫</span>
+                <div>
+                  <strong>Zero Forced Ads Forever</strong>
+                  <p>All interstitial & transition ads permanently disabled!</p>
+                </div>
+              </div>
+              <div class="vip-perk-item">
+                <span class="perk-check">⚡</span>
+                <div>
+                  <strong>Instant Free Revives</strong>
+                  <p>No waiting for video ads! Revive instantly on every run.</p>
+                </div>
+              </div>
+              <div class="vip-perk-item">
+                <span class="perk-check">💎</span>
+                <div>
+                  <strong>+100 Diamond Gems Bonus</strong>
+                  <p>Unlock custom characters & rides in the Toy Box Garage!</p>
+                </div>
+              </div>
+            </div>
+            <button id="btn-buy-no-ads" class="toy-btn primary-btn pulse-glow">UNLOCK VIP FOR $3.99</button>
+            <div class="vip-footer-links">
+              <button id="btn-restore-purchases" class="text-link-btn">Restore Purchases</button>
+              <button id="btn-close-vip" class="toy-btn secondary-btn">CLOSE</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sponsored Video Ad Modal (Simulator & Web Fallback) -->
+        <div id="ad-modal-screen" class="modal-screen hidden">
+          <div class="ad-panel glass-toy-card">
+            <div class="ad-header-bar">
+              <span class="ad-sponsor-tag">SPONSORED REWARD SPOT</span>
+              <span id="ad-timer-countdown" class="ad-timer">3s</span>
+            </div>
+            <div class="ad-media-content">
+              <div class="ad-brand-logo">⚡ BRICKVILLE NITRO FUEL ⚡</div>
+              <div class="ad-brand-tagline">Supercharged Stud Power for Maximum Speed!</div>
+              <div class="ad-toy-car-anim">🏎️💨💨</div>
+              <div class="ad-perk-row">
+                <span class="ad-perk-pill">⭐ +1 Life</span>
+                <span class="ad-perk-pill">💖 +3.5s Shield</span>
+                <span class="ad-perk-pill">🏆 Score Preserved</span>
+              </div>
+            </div>
+            <div class="ad-progress-track">
+              <div id="ad-progress-fill" class="ad-progress-fill" style="width: 0%;"></div>
+            </div>
+            <div id="ad-reward-ready" class="ad-reward-text hidden">🎉 REWARD READY! RESUME YOUR RUN 🎉</div>
+            <button id="btn-ad-skip" class="toy-btn primary-btn ad-claim-btn disabled">Ad closing in 3s...</button>
+          </div>
+        </div>
+
+        <!-- Pause Modal -->
+        <div id="pause-screen" class="modal-screen hidden">
+          <div class="pause-panel glass-toy-card">
+            <h2>PAUSED</h2>
+            <div class="pause-actions">
+              <button id="btn-resume" class="toy-btn primary-btn">RESUME</button>
+              <button id="btn-pause-no-ads" class="toy-btn vip-banner-btn">👑 REMOVE ADS ($3.99)</button>
+              <button id="btn-restart" class="toy-btn secondary-btn">RESTART</button>
+              <button id="btn-quit" class="toy-btn danger-btn">QUIT TO MENU</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Entry TypeScript module -->
+  </body>
+</html>
